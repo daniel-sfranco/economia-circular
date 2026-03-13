@@ -3,3 +3,4 @@ Um marketplace focado em conectar pessoas recém chegadas a uma universidade que
 
 ## Integrantes
 - Daniel Soares Franco - 259083
+- Gabriel Pinto Costa - 245912
