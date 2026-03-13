@@ -5,3 +5,4 @@ Um marketplace focado em conectar pessoas recém chegadas a uma universidade que
 - Daniel Soares Franco - 259083
 - Gabriel Pinto Costa - 245912
 - Vinícius de Oliveira Silva -251527
+- Pedro Bernardo Calou - 186711
