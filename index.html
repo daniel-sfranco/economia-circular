@@ -46,27 +46,14 @@
     </footer>
 
     <script>
-        var scrollTop;
         var lastScrollTop = 0;
 
         function toggleSidebar() {
             var sidebar = document.getElementById('sidebar');
             var overlay = document.getElementById('overlay');
-            if (sidebar.classList.contains('open')) {
-                //Fechando a sidebar
-                sidebar.classList.remove('open');
-                overlay.classList.remove('visible');
-                document.body.classList.remove('sidebar-open');
-                window.scrollTo(0, scrollTop);
-                document.body.style.top = '';
-            } else {
-                // Abrindo a sidebar
-                scrollTop = window.pageYOffset;
-                document.body.style.top = -scrollTop + 'px';
-                sidebar.classList.add('open');
-                overlay.classList.add('visible');
-                document.body.classList.add('sidebar-open');
-            }
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('visible');
+            document.documentElement.classList.toggle('sidebar-open');
         }
 
         window.addEventListener('scroll', function() {
@@ -90,20 +77,14 @@
             if (sidebar.classList.contains('open') && !sidebar.contains(event.target) && !hamburger.contains(event.target)) {
                 sidebar.classList.remove('open');
                 overlay.classList.remove('visible');
-                document.body.classList.remove('sidebar-open');
-                window.scrollTo(0, scrollTop);
-                document.body.style.top = '';
+                document.documentElement.classList.remove('sidebar-open');
             }
         });
 
         document.getElementById('overlay').addEventListener('click', function() {
-            var sidebar = document.getElementById('sidebar');
-            var overlay = document.getElementById('overlay');
-            sidebar.classList.remove('open');
-            overlay.classList.remove('visible');
-            document.body.classList.remove('sidebar-open');
-            window.scrollTo(0, scrollTop);
-            document.body.style.top = '';
+            document.getElementById('sidebar').classList.remove('open');
+            this.classList.remove('visible');
+            document.documentElement.classList.remove('sidebar-open');
         });
     </script>
 </body>

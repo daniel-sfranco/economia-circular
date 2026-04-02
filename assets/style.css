@@ -10,11 +10,8 @@ body {
     color: #333;
 }
 
-body.sidebar-open {
+html.sidebar-open {
     overflow: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100%;
 }
 
 header {
