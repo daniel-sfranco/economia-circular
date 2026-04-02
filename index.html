@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economia Circular</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <header>
+        <button id="hamburger" onclick="toggleSidebar()">☰</button>
+        <h1>Economia Circular</h1>
+    </header>
+
+    <img src="assets/unicamp.jpg" alt="Hero Image" class="hero">
+
+    <div id="sidebar" class="sidebar">
+        <h2>Opções de Busca</h2>
+        <ul>
+            <li>Eletrodomésticos</li>
+            <li>Roupas</li>
+            <li>Eletrônicos</li>
+            <li>Móveis</li>
+        </ul>
+    </div>
+
+    <div id="overlay" class="overlay"></div>
+
+    <main>
+        <section id="about">
+            <h2>Sobre Nós</h2>
+            <p>Este é um site simples sobre economia circular. Promovemos práticas sustentáveis para reduzir o desperdício e promover a reciclagem.</p>
+        </section>
+
+        <section id="services">
+            <h2>Nossos Serviços</h2>
+            <p>Oferecemos consultas, workshops e recursos sobre princípios de economia circular.</p>
+        </section>
+    </main>
+
+    <footer>
+        <h3>Informações de Contato</h3>
+        <p>Email: info@economiacircular.com</p>
+        <p>Telefone: (123) 456-7890</p>
+        <p>Endereço: 123 Rua Sustentável, Cidade Verde, EC 12345</p>
+    </footer>
+
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('visible');
+        }
+
+        document.addEventListener('click', function(event) {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('overlay');
+            var hamburger = document.getElementById('hamburger');
+
+            if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('visible');
+            }
+        });
+
+        document.getElementById('overlay').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.remove('open');
+            this.classList.remove('visible');
+        });
+    </script>
+</body>
+</html>
