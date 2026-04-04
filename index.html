@@ -8,8 +8,23 @@
 </head>
 <body>
     <header>
-        <button id="hamburger" onclick="toggleSidebar()">☰</button>
-        <h1>Economia Circular</h1>
+        <button id="hamburger" onclick="toggleSidebar()" aria-label="Abrir menu">☰</button>
+        <h1 class="visually-hidden">Economia Circular</h1>
+        <a href="index.html" class="brand-link" aria-label="Ir para a página inicial">
+            <img src="assets/Logo_Name.png" alt="Economia Circular" class="brand-logo">
+        </a>
+
+        <nav class="header-nav" aria-label="Navegação principal">
+            <button class="header-btn">Home</button>
+            <button class="header-btn">Recentes</button>
+            <button class="header-btn">Categorias</button>
+            <button class="header-btn">Quem somos</button>
+        </nav>
+
+        <div class="header-actions" aria-hidden="false">
+            <button class="action-btn search" aria-label="Buscar"></button>
+            <button class="action-btn user" aria-label="Perfil do usuário"></button>
+        </div>
     </header>
 
     <img src="assets/unicamp.jpg" alt="Hero Image" class="hero">
@@ -25,6 +40,8 @@
     </div>
 
     <div id="overlay" class="overlay"></div>
+
+    
 
     <main>
         <section id="about">
