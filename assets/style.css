@@ -202,10 +202,42 @@ header h1 {
 }
 
 .item {
-    min-width: 250px;   /* controla tamanho dos cards */
-    height: 200px;
+    width: 250px; /* Reduzi para ficar mais estreito */
+    flex: 0 0 auto;   /* Mantive para forçar o tamanho base */
+    height: 360px;    /* Aumentei para ficar mais alto */
+    border-radius: 16px;
+    background-color: #ddd;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* imagem (parte do X) */
+.item img {
+    width: 100%;
+    height: 70%;
     object-fit: cover;
-    border-radius: 12px;
+    background-color: #ccc;
+}
+
+/* parte de baixo (legenda) */
+.item-info {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* nome */
+.item-title {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+/* tempo */
+.item-time {
+    font-size: 0.8rem;
+    color: #666;
 }
 
 body {

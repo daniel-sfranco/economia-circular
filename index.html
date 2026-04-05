@@ -50,20 +50,13 @@
         </section>
     </main>
 
-    <div class = "container">
-            <button class = "arrow-left-control" aria-label="Previous product">◀</button>
-            <button class = "arrow-right-control" aria-label="Next product">▶</button>
-            <div class = "gallery-wrapper">
-                <div class = "gallery">
-                    <img src = "assets/test_images/Test1.png" class = "item current-item">
-                    <img src = "assets/test_images/Test1.png" class = "item current-item">
-                    <img src = "assets/test_images/Test1.png" class = "item current-item">
-                    <img src = "assets/test_images/Test1.png" class = "item current-item">
-                    <img src = "assets/test_images/Test1.png" class = "item current-item">
-                    <img src = "assets/test_images/Test1.png" class = "item current-item">
-                    <img src = "assets/test_images/Test1.png" class = "item current-item">
-                </div>
-            </div>    
+    <div class="container">
+        <button class="arrow-left-control" aria-label="Previous product">◀</button>
+        <button class="arrow-right-control" aria-label="Next product">▶</button>
+        
+        <div class="gallery-wrapper" id="gallery-scroll">
+            <div class="gallery" id="product-list"></div>
+        </div>    
     </div>
 
     <footer>
@@ -73,47 +66,6 @@
         <p>Endereço: 123 Rua Sustentável, Cidade Verde, EC 12345</p>
     </footer>
 
-    <script>
-        var lastScrollTop = 0;
-
-        function toggleSidebar() {
-            var sidebar = document.getElementById('sidebar');
-            var overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('visible');
-            document.documentElement.classList.toggle('sidebar-open');
-        }
-
-        window.addEventListener('scroll', function() {
-            var st = window.pageYOffset || document.documentElement.scrollTop;
-            var header = document.querySelector('header');
-            if (st > lastScrollTop && st > 100) {
-                // Se escrolar pra baixo, a header some
-                header.classList.add('hidden');
-            } else if (st < lastScrollTop) {
-                // Se escrolar pra cima, ela volta
-                header.classList.remove('hidden');
-            }
-            lastScrollTop = st <= 0 ? 0 : st;
-        });
-
-        document.addEventListener('click', function(event) {
-            var sidebar = document.getElementById('sidebar');
-            var overlay = document.getElementById('overlay');
-            var hamburger = document.getElementById('hamburger');
-
-            if (sidebar.classList.contains('open') && !sidebar.contains(event.target) && !hamburger.contains(event.target)) {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('visible');
-                document.documentElement.classList.remove('sidebar-open');
-            }
-        });
-
-        document.getElementById('overlay').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.remove('open');
-            this.classList.remove('visible');
-            document.documentElement.classList.remove('sidebar-open');
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
