@@ -183,6 +183,31 @@ header h1 {
     pointer-events: auto;
 }
 
+.container {
+    position: relative;
+    
+    width: 90vw;              /* largura da tela inteira */
+    left: 50%;
+    transform: translateX(-50%);  /* centraliza na tela */
+
+    padding: 15px 0;
+}
+.gallery-wrapper {
+    overflow-x: auto;
+}
+.gallery {
+    display: flex;
+    gap: 20px;
+    padding: 0 2rem; 
+}
+
+.item {
+    min-width: 250px;   /* controla tamanho dos cards */
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
