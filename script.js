@@ -1,6 +1,3 @@
-// ==========================================
-// 1. Lógica Geral (Menu, Scroll e Overlay)
-// ==========================================
 var lastScrollTop = 0;
 
 function toggleSidebar() {
@@ -45,11 +42,6 @@ if (overlayEl) {
     });
 }
 
-// ==========================================
-// 2. Lógica da Página Inicial (Carrossel)
-// ==========================================
-
-// Verifica se o container de produtos existe na página atual antes de rodar o fetch
 const container = document.getElementById('product-list');
 
 if (container) {
@@ -60,8 +52,13 @@ if (container) {
                 const card = document.createElement('div');
                 card.classList.add('item');
 
+                const imagemFallback = 'assets/image_not_found.png';
                 card.innerHTML = `
-                    <img src="${produto.imagem}" alt="${produto.nome}">
+                    <img 
+                        src="${produto.imagem || imagemFallback}" 
+                        alt="${produto.nome}" 
+                        onerror="this.onerror=null; this.src='${imagemFallback}';"
+                    >
                     <div class="item-info">
                         <div class="item-title">${produto.nome}</div>
                         <div class="item-time">${produto.tempo}</div>
