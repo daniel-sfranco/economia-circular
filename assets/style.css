@@ -38,6 +38,9 @@ body {
 h1, h2, h3 {
     font-family: 'Title', Arial, sans-serif;
 }
+p {
+    text-align: justify;
+}
 
 header {
     background-color: #fff9f3;
