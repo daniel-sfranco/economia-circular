@@ -1,0 +1,42 @@
+[
+  {
+    "Product_ID": 1,
+    "Name": "Geladeira",
+    "Post_Date": "2026-04-03T10:00:00Z"
+  },
+  {
+    "Product_ID": 2,
+    "Name": "Cadeira",
+    "Post_Date": "2026-04-05T18:30:00Z"
+  },
+  {
+    "Product_ID": 3,
+    "Name": "Mesa de Estudos",
+    "Post_Date": "2026-04-04T09:15:00Z"
+  },
+  {
+    "Product_ID": 4,
+    "Name": "Micro-ondas",
+    "Post_Date": "2026-04-05T20:45:00Z"
+  },
+  {
+    "Product_ID": 5,
+    "Name": "Ventilador de Teto",
+    "Post_Date": "2026-04-05T23:21:00Z"
+  },
+  {
+    "Product_ID": 6,
+    "Name": "Guarda-roupa",
+    "Post_Date": "2026-04-01T14:00:00Z"
+  },
+  {
+    "Product_ID": 7,
+    "Name": "Fritadeira Airfryer",
+    "Post_Date": "2026-03-29T11:20:00Z"
+  },
+  {
+    "Product_ID": 8,
+    "Name": "Produto Nome Muito Longo Teste",
+    "Post_Date": "2026-03-22T08:00:00Z"
+  }
+]

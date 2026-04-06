@@ -272,6 +272,10 @@ header h1 {
     border: 1px solid #f0f0f0;
 }
 
+.item a {
+    text-decoration: none;
+}
+
 .item:hover {
     transform: scale(1.04) translateY(-4px); 
     box-shadow: 0 12px 24px rgba(68, 152, 0, 0.3); 

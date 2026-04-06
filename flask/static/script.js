@@ -45,7 +45,7 @@ if (overlayEl) {
 const container = document.getElementById('product-list');
 
 if (container) {
-    fetch('/api/produtos') 
+    fetch('/api/products') 
         .then(response => {
             if (!response.ok) throw new Error("Erro na rede");
             return response.json();
@@ -57,21 +57,51 @@ if (container) {
                 
                 const imagemFallback = '/static/assets/image_not_found.png';
                 card.innerHTML = `
+                <a href="product?id=${produto.Product_ID}">
                     <img 
                         src="${produto.imagem || imagemFallback}" 
-                        alt="${produto.nome}" 
+                        alt="${produto.Name}" 
                         onerror="this.onerror=null; this.src='${imagemFallback}';"
                     >
                     <div class="item-info">
-                        <div class="item-title">${produto.nome}</div>
-                        <div class="item-time">${produto.tempo}</div>
-                    </div>
+                        <div class="item-title">${produto.Name}</div>
+                        <div class="item-time">${formatElapsedTime(produto.Post_Date)}</div>
+                    </div>\
+                </a>
                 `;
 
                 container.appendChild(card);
             });
         })
         .catch(error => console.error("Erro ao carregar o JSON:", error));
+}
+
+function formatElapsedTime(dataISO) {
+    const now = new Date();
+    const post = new Date(dataISO);
+    const elapsedSeconds = Math.floor((now - post) / 1000);
+
+    if (elapsedSeconds < 60) return "agora mesmo";
+
+    const intervals = [
+        { name: "ano", seconds: 31536000 },
+        { name: "mês", seconds: 2592000 },
+        { name: "dia", seconds: 86400 },
+        { name: "hora", seconds: 3600 },
+        { name: "minuto", seconds: 60 }
+    ];
+
+    for (const interval of intervals) {
+        const count = Math.floor(elapsedSeconds / interval.seconds);
+        
+        if (count >= 1) {
+            let unit = interval.name;
+            if (count > 1) {
+                unit = (unit === "mês") ? "meses" : unit + "s";
+            }
+            return `há ${count} ${unit}`;
+        }
+    }
 }
 
 // Verifica se os controles do carrossel existem na página atual
