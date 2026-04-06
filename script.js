@@ -42,56 +42,93 @@ if (overlayEl) {
     });
 }
 
-const container = document.getElementById('product-list');
+// ==========================================
+// 2. Lógica da Página Inicial (Carrossel)
+// ==========================================
 
-if (container) {
-    fetch('produtos.json')
+// Função que cria o HTML do card
+function createCard(produto) {
+    const imagemFallback = 'assets/image_not_found.png';
+    return `
+        <div class="item">
+            <img 
+                src="${produto.imagem || imagemFallback}" 
+                alt="${produto.nome}" 
+                onerror="this.onerror=null; this.src='${imagemFallback}';"
+            >
+            <div class="item-info">
+                <div class="item-title">${produto.nome}</div>
+                <div class="item-time">${produto.tempo}</div>
+            </div>
+        </div>
+    `;
+}
+
+// Função para buscar o JSON e montar um carrossel específico
+function carregarCarrossel(jsonFile, listId, sectionId, esconderSeVazio) {
+    const section = document.getElementById(sectionId);
+    const list = document.getElementById(listId);
+
+    // Se não existir o elemento HTML na página (ex: página Sobre), interrompe
+    if (!section || !list) return;
+
+    fetch(jsonFile)
         .then(response => response.json())
         .then(data => {
-            data.forEach(produto => {
-                const card = document.createElement('div');
-                card.classList.add('item');
+            // Se o JSON estiver vazio ou não tiver dados
+            if (!data || data.length === 0) {
+                if (esconderSeVazio) {
+                    section.style.display = 'none'; // Esconde tudo
+                }
+                return; // O CSS (.gallery:empty) vai segurar o espaço do "Recomendados"
+            }
 
-                const imagemFallback = 'assets/image_not_found.png';
-                card.innerHTML = `
-                    <img 
-                        src="${produto.imagem || imagemFallback}" 
-                        alt="${produto.nome}" 
-                        onerror="this.onerror=null; this.src='${imagemFallback}';"
-                    >
-                    <div class="item-info">
-                        <div class="item-title">${produto.nome}</div>
-                        <div class="item-time">${produto.tempo}</div>
-                    </div>
-                `;
-
-                container.appendChild(card);
-            });
+            // Se tem dados, garante que a seção esteja visível e insere os cards
+            if (esconderSeVazio) {
+                section.style.display = 'block';
+            }
+            
+            // Junta todos os cards e joga dentro da lista
+            list.innerHTML = data.map(produto => createCard(produto)).join('');
         })
-        .catch(error => console.error("Erro ao carregar o JSON:", error));
+        .catch(error => {
+            console.error(`Erro ao carregar ${jsonFile}:`, error);
+            // Se der erro (ex: arquivo não existe) e for pra esconder, esconde
+            if (esconderSeVazio) {
+                section.style.display = 'none';
+            }
+        });
 }
 
-// Verifica se os controles do carrossel existem na página atual
-const galleryScroll = document.getElementById('gallery-scroll');
-const btnLeft = document.querySelector('.arrow-left-control');
-const btnRight = document.querySelector('.arrow-right-control');
+// Inicializa os dois carrosséis (Arquivo JSON, ID da Lista, ID da Seção, Esconder se vazio?)
+carregarCarrossel('recomendados.json', 'recomendados-list', 'section-recomendados', false);
+carregarCarrossel('vistos.json', 'vistos-list', 'section-vistos', true);
 
-if (galleryScroll && btnLeft && btnRight) {
-    const scrollAmount = 300;
 
-    btnLeft.addEventListener('click', () => {
-        galleryScroll.scrollBy({
-            top: 0,
-            left: -scrollAmount,
-            behavior: 'smooth'
+// Lógica das Setas para múltiplos carrosséis
+// Encontra todos os containers de carrossel na página
+document.querySelectorAll('.container').forEach(container => {
+    const wrapper = container.querySelector('.gallery-wrapper');
+    const btnLeft = container.querySelector('.arrow-left-control');
+    const btnRight = container.querySelector('.arrow-right-control');
+
+    if (wrapper && btnLeft && btnRight) {
+        const scrollAmount = 300;
+
+        btnLeft.addEventListener('click', () => {
+            wrapper.scrollBy({
+                top: 0,
+                left: -scrollAmount,
+                behavior: 'smooth'
+            });
         });
-    });
 
-    btnRight.addEventListener('click', () => {
-        galleryScroll.scrollBy({
-            top: 0,
-            left: scrollAmount,
-            behavior: 'smooth'
+        btnRight.addEventListener('click', () => {
+            wrapper.scrollBy({
+                top: 0,
+                left: scrollAmount,
+                behavior: 'smooth'
+            });
         });
-    });
-}
+    }
+});
