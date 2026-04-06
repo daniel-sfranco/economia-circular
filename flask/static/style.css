@@ -22,12 +22,12 @@ html.sidebar-open {
 
 @font-face {
     font-family: 'Title';
-    src: url('fonts/BauhausRegular\(TITLE\).ttf') format('truetype');
+    src: url('assets/fonts/BauhausRegular\(TITLE\).ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'Body';
-    src: url('fonts/calps-regular\(BODY\).ttf') format('truetype');
+    src: url('assets/fonts/calps-regular\(BODY\).ttf') format('truetype');
 }
 
 body {
@@ -249,7 +249,7 @@ header h1 {
     cursor: pointer;
     z-index: 10; 
     
-    background-image: url('Arrows/seta_verde.png');
+    background-image: url('assets/Arrows/seta_verde.png');
     background-size: contain; 
     background-repeat: no-repeat;
     background-position: center;
@@ -275,7 +275,7 @@ header h1 {
 
 .arrow-left-control:hover,
 .arrow-right-control:hover {
-    background-image: url('Arrows/seta_laranja.png');
+    background-image: url('assets/Arrows/seta_laranja.png');
 }
 
 .arrow-left-control:hover {
@@ -299,6 +299,10 @@ header h1 {
     transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
     cursor: pointer; 
     border: 1px solid #f0f0f0;
+}
+
+.item a {
+    text-decoration: none;
 }
 
 .item:hover {
@@ -413,11 +417,11 @@ header h1 {
 .action-btn::before { z-index: 0; opacity: 1; }
 .action-btn::after { z-index: 1; opacity: 0; }
 
-.action-btn.search::before { background-image: url('Lupa/lupa_verde.png'); }
-.action-btn.search::after  { background-image: url('Lupa/lupa_laranja.png'); }
+.action-btn.search::before { background-image: url('assets/Lupa/lupa_verde.png'); }
+.action-btn.search::after  { background-image: url('assets/Lupa/lupa_laranja.png'); }
 
-.action-btn.user::before  { background-image: url('Usuario/usuario_verde.png'); }
-.action-btn.user::after   { background-image: url('Usuario/usuario_laranja.png'); }
+.action-btn.user::before  { background-image: url('assets/Usuario/usuario_verde.png'); }
+.action-btn.user::after   { background-image: url('assets/Usuario/usuario_laranja.png'); }
 
 .action-btn:hover::after,
 .action-btn:focus::after {

@@ -3,31 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESAPEGUNICAMP</title>
-    <link rel="icon" href="assets/favicon.ico" type="image/ico">
-    <link rel="stylesheet" href="assets/style.css">
+    <title>{% block title %}DESAPEGUNICAMP{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='assets/favicon.ico') }}" type="image/ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
         <button id="hamburger" onclick="toggleSidebar()" aria-label="Abrir menu">☰</button>
         <h1 class="visually-hidden">Economia Circular</h1>
-        <a href="index.html" class="brand-link" aria-label="Ir para a página inicial">
-            <img src="assets/Logo_Name_Alternative.png" alt="Economia Circular" class="brand-logo">
+        <a href="/" class="brand-link" aria-label="Ir para a página inicial">
+            <img src="{{ url_for('static', filename='assets/Logo_Name_Alternative.png') }}" alt="Economia Circular" class="brand-logo">
         </a>
 
         <nav class="header-nav" aria-label="Navegação principal">
             <button class="header-btn">Recentes</button>
             <button class="header-btn">Categorias</button>
-            <a href="about.html" class="header-btn">Quem somos</a>
+            <a href="{{ url_for('main_routes.aboutpage') }}" class="header-btn">Quem somos</a>
         </nav>
 
-        <div class="header-actions" aria-hidden="false">
+        <div class="header-actions">
             <button class="action-btn search" aria-label="Buscar"></button>
             <button class="action-btn user" aria-label="Perfil do usuário"></button>
         </div>
     </header>
 
-    <img src="assets/unicamp.jpg" alt="Hero Image" class="hero">
+    {% block hero %}{% endblock %}
 
     <div id="sidebar" class="sidebar">
         <h2>Opções de Busca</h2>
@@ -40,8 +40,6 @@
     </div>
 
     <div id="overlay" class="overlay"></div>
-
-    
 
     <main>
     </main>
@@ -77,6 +75,6 @@
         <p>Endereço: 123 Rua Sustentável, Cidade Verde, EC 12345</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
