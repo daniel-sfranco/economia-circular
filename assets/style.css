@@ -10,7 +10,6 @@ main {
     padding-bottom: 2rem;
     width: 100%;
     box-sizing: border-box;
-    margin: 0 auto;
 }
 
 html.sidebar-open {
@@ -19,12 +18,12 @@ html.sidebar-open {
 
 @font-face {
     font-family: 'Title';
-    src: url('assets/fonts/BauhausRegular\(TITLE\).ttf') format('truetype');
+    src: url('fonts/BauhausRegular\(TITLE\).ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'Body';
-    src: url('assets/fonts/calps-regular\(BODY\).ttf') format('truetype');
+    src: url('fonts/calps-regular\(BODY\).ttf') format('truetype');
 }
 
 body {
@@ -185,15 +184,15 @@ header h1 {
 }
 
 .carousel-section {
-    width: 90%; 
-    max-width: 1800px;
+    width: 98%; /* Faz o carrossel ocupar quase a tela inteira */
+    max-width: 1800px; /* Limite bem alto para monitores gigantes */
     margin: 0 auto 3rem auto; 
 }
 
 .carousel-section h2 {
     color: #449800; 
     margin-bottom: 0.5rem;
-    padding-left: 2rem; 
+    padding-left: 1rem; 
     font-size: 1.8rem;
 }
 
@@ -204,17 +203,23 @@ header h1 {
 }
 
 .gallery:empty {
-    min-height: 460px;
+    min-height: 400px;
 }
 
 .gallery-wrapper {
     overflow-x: auto;
     width: 100%;
-    scrollbar-width: none; 
+    scrollbar-width: none; /* Esconde scrollbar no Firefox */
 }
 
 .gallery-wrapper::-webkit-scrollbar {
-    display: none; 
+    display: none; /* Esconde scrollbar no Chrome/Edge/Safari */
+}
+
+#about {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem;
 }
 
 .gallery {
@@ -242,7 +247,7 @@ header h1 {
     cursor: pointer;
     z-index: 10; 
     
-    background-image: url('assets/Arrows/seta_verde.png');
+    background-image: url('Arrows/seta_verde.png');
     background-size: contain; 
     background-repeat: no-repeat;
     background-position: center;
@@ -268,7 +273,7 @@ header h1 {
 
 .arrow-left-control:hover,
 .arrow-right-control:hover {
-    background-image: url('assets/Arrows/seta_laranja.png');
+    background-image: url('Arrows/seta_laranja.png');
 }
 
 .arrow-left-control:hover {
@@ -292,10 +297,6 @@ header h1 {
     transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
     cursor: pointer; 
     border: 1px solid #f0f0f0;
-}
-
-.item a {
-    text-decoration: none;
 }
 
 .item:hover {
@@ -410,11 +411,11 @@ header h1 {
 .action-btn::before { z-index: 0; opacity: 1; }
 .action-btn::after { z-index: 1; opacity: 0; }
 
-.action-btn.search::before { background-image: url('assets/Lupa/lupa_verde.png'); }
-.action-btn.search::after  { background-image: url('assets/Lupa/lupa_laranja.png'); }
+.action-btn.search::before { background-image: url('Lupa/lupa_verde.png'); }
+.action-btn.search::after  { background-image: url('Lupa/lupa_laranja.png'); }
 
-.action-btn.user::before  { background-image: url('assets/Usuario/usuario_verde.png'); }
-.action-btn.user::after   { background-image: url('assets/Usuario/usuario_laranja.png'); }
+.action-btn.user::before  { background-image: url('Usuario/usuario_verde.png'); }
+.action-btn.user::after   { background-image: url('Usuario/usuario_laranja.png'); }
 
 .action-btn:hover::after,
 .action-btn:focus::after {
@@ -455,14 +456,4 @@ footer {
     padding: 1rem;
     width: 100%;
     position: relative;
-}
-
-#about {
-    max-width: 60vw;
-    margin: 0 auto;
-    padding: 0 2rem;
-}
-#about p {
-    font-size: 1.5rem;
-    line-height: 1.8;
 }

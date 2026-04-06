@@ -46,60 +46,7 @@ if (overlayEl) {
 // 2. Lógica da Página Inicial (Carrossel)
 // ==========================================
 
-// Função que cria o HTML do card
-function createCard(produto) {
-    const imagemFallback = 'assets/image_not_found.png';
-    return `
-        <div class="item">
-            <img 
-                src="${produto.imagem || imagemFallback}" 
-                alt="${produto.nome}" 
-                onerror="this.onerror=null; this.src='${imagemFallback}';"
-            >
-            <div class="item-info">
-                <div class="item-title">${produto.nome}</div>
-                <div class="item-time">${produto.tempo}</div>
-            </div>
-        </div>
-    `;
-}
-
-// Função para buscar o JSON e montar um carrossel específico
-function carregarCarrossel(jsonFile, listId, sectionId, esconderSeVazio) {
-    const section = document.getElementById(sectionId);
-    const list = document.getElementById(listId);
-if (container) {
-    fetch('/api/products') 
-        .then(response => {
-            if (!response.ok) throw new Error("Erro na rede");
-            return response.json();
-        })
-        .then(data => {
-            data.forEach(produto => {
-                const card = document.createElement('div');
-                card.classList.add('item');
-                
-                const imagemFallback = '/static/assets/image_not_found.png';
-                card.innerHTML = `
-                <a href="product?id=${produto.Product_ID}">
-                    <img 
-                        src="${produto.imagem || imagemFallback}" 
-                        alt="${produto.Name}" 
-                        onerror="this.onerror=null; this.src='${imagemFallback}';"
-                    >
-                    <div class="item-info">
-                        <div class="item-title">${produto.Name}</div>
-                        <div class="item-time">${formatElapsedTime(produto.Post_Date)}</div>
-                    </div>\
-                </a>
-                `;
-
-                container.appendChild(card);
-            });
-        })
-        .catch(error => console.error("Erro ao carregar o JSON:", error));
-}
-
+// Função de formatação de tempo (adicionada pelo seu amigo)
 function formatElapsedTime(dataISO) {
     const now = new Date();
     const post = new Date(dataISO);
@@ -117,7 +64,6 @@ function formatElapsedTime(dataISO) {
 
     for (const interval of intervals) {
         const count = Math.floor(elapsedSeconds / interval.seconds);
-        
         if (count >= 1) {
             let unit = interval.name;
             if (count > 1) {
@@ -128,49 +74,74 @@ function formatElapsedTime(dataISO) {
     }
 }
 
-// Verifica se os controles do carrossel existem na página atual
-const galleryScroll = document.getElementById('gallery-scroll');
-const btnLeft = document.querySelector('.arrow-left-control');
-const btnRight = document.querySelector('.arrow-right-control');
+// Função que cria o HTML do card
+function createCard(produto) {
+    const imagemFallback = '/static/assets/image_not_found.png';
+    
+    // Suporte tanto para os novos nomes da API (Name, Product_ID) quanto os antigos do JSON
+    const nome = produto.Name || produto.nome;
+    const id = produto.Product_ID || produto.id || 1;
+    const dataPostagem = produto.Post_Date || produto.tempo;
+    
+    // Se a data for ISO (tiver um 'T'), usa a formatação nova. Senão, mantém a original.
+    const tempoFormatado = dataPostagem && dataPostagem.includes("T") ? formatElapsedTime(dataPostagem) : dataPostagem;
 
-    // Se não existir o elemento HTML na página (ex: página Sobre), interrompe
+    return `
+        <div class="item">
+            <a href="product?id=${id}">
+                <img 
+                    src="${produto.imagem || imagemFallback}" 
+                    alt="${nome}" 
+                    onerror="this.onerror=null; this.src='${imagemFallback}';"
+                >
+                <div class="item-info">
+                    <div class="item-title">${nome}</div>
+                    <div class="item-time">${tempoFormatado}</div>
+                </div>
+            </a>
+        </div>
+    `;
+}
+
+// Função para buscar o JSON/API e montar um carrossel específico
+function carregarCarrossel(endpoint, listId, sectionId, esconderSeVazio) {
+    const section = document.getElementById(sectionId);
+    const list = document.getElementById(listId);
+
     if (!section || !list) return;
 
-    fetch(jsonFile)
-        .then(response => response.json())
+    fetch(endpoint)
+        .then(response => {
+            if (!response.ok) throw new Error("Erro na rede");
+            return response.json();
+        })
         .then(data => {
-            // Se o JSON estiver vazio ou não tiver dados
             if (!data || data.length === 0) {
                 if (esconderSeVazio) {
-                    section.style.display = 'none'; // Esconde tudo
+                    section.style.display = 'none';
                 }
-                return; // O CSS (.gallery:empty) vai segurar o espaço do "Recomendados"
+                return;
             }
 
-            // Se tem dados, garante que a seção esteja visível e insere os cards
             if (esconderSeVazio) {
                 section.style.display = 'block';
             }
             
-            // Junta todos os cards e joga dentro da lista
             list.innerHTML = data.map(produto => createCard(produto)).join('');
         })
         .catch(error => {
-            console.error(`Erro ao carregar ${jsonFile}:`, error);
-            // Se der erro (ex: arquivo não existe) e for pra esconder, esconde
+            console.error(`Erro ao carregar ${endpoint}:`, error);
             if (esconderSeVazio) {
                 section.style.display = 'none';
             }
         });
 }
 
-// Inicializa os dois carrosséis (Arquivo JSON, ID da Lista, ID da Seção, Esconder se vazio?)
-carregarCarrossel('recomendados.json', 'recomendados-list', 'section-recomendados', false);
+// Inicializa os carrosséis usando a nova API para recomendados
+carregarCarrossel('/api/products', 'recomendados-list', 'section-recomendados', false);
 carregarCarrossel('vistos.json', 'vistos-list', 'section-vistos', true);
 
-
 // Lógica das Setas para múltiplos carrosséis
-// Encontra todos os containers de carrossel na página
 document.querySelectorAll('.container').forEach(container => {
     const wrapper = container.querySelector('.gallery-wrapper');
     const btnLeft = container.querySelector('.arrow-left-control');

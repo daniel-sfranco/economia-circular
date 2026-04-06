@@ -5,18 +5,27 @@
 {% endblock %}
 
 {% block content %}
-
-    <section id="temp">
+    <div class="carousel-section" id="section-recomendados">
         <h2>Recomendados</h2>
-        <p>Aqui vai ter recomendação de produtos (mais recentes, algo assim)</p>
-    </section>
+        <div class="container">
+            <button class="arrow-left-control" aria-label="Previous product"></button>
+            <button class="arrow-right-control" aria-label="Next product"></button>
+            
+            <div class="gallery-wrapper">
+                <div class="gallery" id="recomendados-list"></div>
+            </div>    
+        </div>
+    </div>
 
-    <div class="container">
-        <button class="arrow-left-control" aria-label="Previous product">◀</button>
-        <button class="arrow-right-control" aria-label="Next product">▶</button>
-        
-        <div class="gallery-wrapper" id="gallery-scroll">
-            <div class="gallery" id="product-list"></div>
-        </div>    
+    <div class="carousel-section" id="section-vistos" style="display: none;">
+        <h2>Vistos Recentemente</h2>
+        <div class="container">
+            <button class="arrow-left-control" aria-label="Previous product"></button>
+            <button class="arrow-right-control" aria-label="Next product"></button>
+            
+            <div class="gallery-wrapper">
+                <div class="gallery" id="vistos-list"></div>
+            </div>    
+        </div>
     </div>
 {% endblock %}
