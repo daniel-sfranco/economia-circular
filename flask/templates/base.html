@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DESAPEGUNICAMP{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='assets/favicon.ico') }}" type="image/ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <button id="hamburger" onclick="toggleSidebar()" aria-label="Abrir menu">☰</button>
+        <h1 class="visually-hidden">Economia Circular</h1>
+        <a href="/" class="brand-link" aria-label="Ir para a página inicial">
+            <img src="{{ url_for('static', filename='assets/Logo_Name_Alternative.png') }}" alt="Economia Circular" class="brand-logo">
+        </a>
+
+        <nav class="header-nav" aria-label="Navegação principal">
+            <button class="header-btn">Recentes</button>
+            <button class="header-btn">Categorias</button>
+            <a href="{{ url_for('main_routes.aboutpage') }}" class="header-btn">Quem somos</a>
+        </nav>
+
+        <div class="header-actions">
+            <button class="action-btn search" aria-label="Buscar"></button>
+            <button class="action-btn user" aria-label="Perfil do usuário"></button>
+        </div>
+    </header>
+
+    {% block hero %}{% endblock %}
+
+    <div id="sidebar" class="sidebar">
+        <h2>Opções de Busca</h2>
+        <ul>
+            <li>Eletrodomésticos</li>
+            <li>Roupas</li>
+            <li>Eletrônicos</li>
+            <li>Móveis</li>
+        </ul>
+    </div>
+
+    <div id="overlay" class="overlay"></div>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <h3>Informações de Contato</h3>
+        <p>Email: info@economiacircular.com</p>
+        <p>Telefone: (123) 456-7890</p>
+        <p>Endereço: 123 Rua Sustentável, Cidade Verde, EC 12345</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
