@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DESAPEGUNICAMP</title>
-    <link rel="icon" href="assets/favicon.ico" type="image/ico">
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="icon" href="{{ url_for('static', filename='assets/favicon.ico') }}" type="image/ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
         <button id="hamburger" onclick="toggleSidebar()" aria-label="Abrir menu">☰</button>
         <h1 class="visually-hidden">Economia Circular</h1>
         <a href="index.html" class="brand-link" aria-label="Ir para a página inicial">
-            <img src="assets/Logo_Name_Alternative.png" alt="Economia Circular" class="brand-logo">
+            <img src="{{ url_for('static', filename='assets/Logo_Name_Alternative.png') }}" alt="Economia Circular" class="brand-logo">
         </a>
 
         <nav class="header-nav" aria-label="Navegação principal">
@@ -27,7 +27,7 @@
         </div>
     </header>
 
-    <img src="assets/unicamp.jpg" alt="Hero Image" class="hero">
+    <img src="{{ url_for('static', filename='assets/unicamp.jpg') }}" alt="Hero Image" class="hero">
 
     <div id="sidebar" class="sidebar">
         <h2>Opções de Busca</h2>
@@ -66,6 +66,6 @@
         <p>Endereço: 123 Rua Sustentável, Cidade Verde, EC 12345</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

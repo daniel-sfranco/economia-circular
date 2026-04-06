@@ -45,14 +45,17 @@ if (overlayEl) {
 const container = document.getElementById('product-list');
 
 if (container) {
-    fetch('produtos.json')
-        .then(response => response.json())
+    fetch('/api/produtos') 
+        .then(response => {
+            if (!response.ok) throw new Error("Erro na rede");
+            return response.json();
+        })
         .then(data => {
             data.forEach(produto => {
                 const card = document.createElement('div');
                 card.classList.add('item');
-
-                const imagemFallback = 'assets/image_not_found.png';
+                
+                const imagemFallback = '/static/assets/image_not_found.png';
                 card.innerHTML = `
                     <img 
                         src="${produto.imagem || imagemFallback}" 
