@@ -8,6 +8,10 @@ main_routes = Blueprint('main_routes', __name__)
 def homepage():
     return render_template("index.html")
 
+@main_routes.route('/about')
+def aboutpage():
+    return render_template("about.html")
+
 @main_routes.route('/api/produtos')
 def listar_produtos():
 
