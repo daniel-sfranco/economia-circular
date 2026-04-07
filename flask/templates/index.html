@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block hero %}
+   <div id="hero">
+        <div class="hero-content">
+            <img class="hero-text" src="{{ url_for('static', filename='assets/logo_text.png') }}" alt="Logo DesapegUnicamp">
+        </div>
+        <p class="hero-subtitle">Conectando estudantes e promovendo a economia circular.</p>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="carousel-section" id="section-recomendados">
+        <h2>Recomendados</h2>
+        <div class="container">
+            <button class="arrow-left-control" aria-label="Previous product"></button>
+            <button class="arrow-right-control" aria-label="Next product"></button>
+            
+            <div class="gallery-wrapper">
+                <div class="gallery" id="recomendados-list"></div>
+            </div>    
+        </div>
+    </div>
+
+    <div class="carousel-section" id="section-vistos" style="display: none;">
+        <h2>Vistos Recentemente</h2>
+        <div class="container">
+            <button class="arrow-left-control" aria-label="Previous product"></button>
+            <button class="arrow-right-control" aria-label="Next product"></button>
+            
+            <div class="gallery-wrapper">
+                <div class="gallery" id="vistos-list"></div>
+            </div>    
+        </div>
+    </div>
+{% endblock %}

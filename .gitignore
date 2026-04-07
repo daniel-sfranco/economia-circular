@@ -1,2 +1,17 @@
-.venv
-__pycache__
+# Python (Cache)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambientes Virtuais
+venv/
+.venv/
+env/
+
+# Flask e Variáveis de Ambiente
+.env
+instance/
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db

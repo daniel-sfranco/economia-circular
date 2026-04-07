@@ -1,0 +1,9 @@
+{
+  "product_id": 8,
+  "product_name": "Produto Teste Nome Longo",
+  "seller": "Sistema de Testes",
+  "cost": 99.99,
+  "post_date": "2026-03-23T09:00:00Z",
+  "quantity": 10,
+  "description": "Este item simula o produto com nome truncado para respeitar o limite de 30 caracteres do banco de dados."
+}

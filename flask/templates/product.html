@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<p id="prodName"></p>
+<p id="seller"></p>
+<p id="cost"></p>
+<p id="date"></p>
+<p id="quantity"></p>
+<p id="description"></p>
+
+<script src="{{ url_for('static', filename='productDescription.js') }}"></script>
+
+{% endblock %}
