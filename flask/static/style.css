@@ -150,23 +150,30 @@ header h1 {
     cursor: pointer;
 }
 
-.hero {
-    width: 100%;
-    height: calc(100vh - 6rem); 
-    flex-shrink: 0; 
-    margin-top: 6rem; 
-    max-height: none;
-    min-height: 300px;
-    display: block;
-    object-fit: cover; 
-    object-position: center top;
-}
-
-#test {
-    height: calc(100vh - 6rem); 
+#hero {
+    position: relative;
+    height: 100vh; 
     background-image: url(assets/unicamp.svg);
     background-size: cover;
     background-position: center;
+}
+
+.hero-text {
+    position: absolute;
+    bottom: 15vh; 
+    left: 50%;
+    transform: translateX(-50%); 
+    
+    height: auto;
+    width: auto;
+    max-width: 90vw;
+    z-index: 10; 
+    
+    /*FUNDO PRA VER SE A IMAGEM TA SENDO PLOTDA NA TELA*/
+    border: 5px solid red; 
+    min-width: 200px;
+    min-height: 100px;
+    background-color: rgba(0,0,0,0.5); 
 }
 
 .sidebar {
