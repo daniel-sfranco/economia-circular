@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 
 {% block hero %}
-    <div id="hero">
-        <img class="hero-text" src="{{ url_for('static', filename='assets/logo_text.png') }}" alt="Logo DesapegUnicamp">
+   <div id="hero">
+        <div class="hero-content">
+            <img class="hero-text" src="{{ url_for('static', filename='assets/logo_text.png') }}" alt="Logo DesapegUnicamp">
+        </div>
+        <p class="hero-subtitle">Conectando estudantes e promovendo a economia circular.</p>
     </div>
 {% endblock %}
 

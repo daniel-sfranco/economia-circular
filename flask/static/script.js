@@ -1,12 +1,12 @@
 var lastScrollTop = 0;
 
-function toggleSidebar() {
-    var sidebar = document.getElementById('sidebar');
-    var overlay = document.getElementById('overlay');
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('visible');
-    document.documentElement.classList.toggle('sidebar-open');
-}
+// function toggleSidebar() {
+//     var sidebar = document.getElementById('sidebar');
+//     var overlay = document.getElementById('overlay');
+//     sidebar.classList.toggle('open');
+//     overlay.classList.toggle('visible');
+//     document.documentElement.classList.toggle('sidebar-open');
+// }
 
 window.addEventListener('scroll', function() {
     var st = window.pageYOffset || document.documentElement.scrollTop;
@@ -41,10 +41,6 @@ if (overlayEl) {
         document.documentElement.classList.remove('sidebar-open');
     });
 }
-
-// ==========================================
-// 2. Lógica da Página Inicial (Carrossel)
-// ==========================================
 
 // Função de formatação de tempo (adicionada pelo seu amigo)
 function formatElapsedTime(dataISO) {
@@ -165,5 +161,23 @@ document.querySelectorAll('.container').forEach(container => {
                 behavior: 'smooth'
             });
         });
+    }
+});
+
+window.addEventListener('scroll', function() {
+    // Pega a quantidade de pixels que o usuário já rolou para baixo
+    var scrollY = window.scrollY || window.pageYOffset;
+    var hero = document.getElementById('hero');
+
+    if (hero) {
+        // Pega a altura total da janela do navegador do usuário
+        var windowHeight = window.innerHeight;
+
+        // Calcula a opacidade: começa em 1 (100% visível) no topo
+        // e vai diminuindo até 0 conforme rola a página.
+        var opacidade = 1 - (scrollY / (windowHeight * 0.9));
+
+        opacidade = Math.max(0, Math.min(1, opacidade));
+        hero.style.opacity = opacidade;
     }
 });
