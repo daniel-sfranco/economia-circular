@@ -1,13 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div id="product-info">
+    <div class="product-image-container">
+        <img class="product-image" src="{{ url_for('static', filename='assets/image_not_found.png') }}" alt="Imagem do Produto">
+    </div>
+    <div class="product-description">
+        <p id="prodName"></p>
+        <p id="seller"></p>
+        <p id="cost"></p>
+        <p id="date"></p>
+        <p id="quantity"></p>
+        <p id="description"></p>
+    </div>
+</div>
 
-<p id="prodName"></p>
-<p id="seller"></p>
-<p id="cost"></p>
-<p id="date"></p>
-<p id="quantity"></p>
-<p id="description"></p>
 
 <script src="{{ url_for('static', filename='productDescription.js') }}"></script>
 

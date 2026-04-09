@@ -530,6 +530,29 @@ a {
     .header-actions { right: 0.6rem; gap: 1rem; }
 }
 
+#product-info {
+    width: 100vh;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-image {
+    width: 250px; 
+    flex: 0 0 auto;   
+    height: 360px;    
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); 
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    border: 1px solid #f0f0f0;
+}
+
+.product-image:hover{
+    transform: scale(1.04) translateY(-4px); 
+    box-shadow: 0 12px 24px rgba(68, 152, 0, 0.3); 
+    background-color: #fffdfa; 
+}
+
 .sidebar h2 {
     margin-top: 0;
 }
