@@ -1,6 +1,7 @@
 import json
 import os
 from flask import Blueprint, jsonify, render_template
+from models.product import Product
 
 main_routes = Blueprint('main_routes', __name__)
 
@@ -18,26 +19,14 @@ def productpage():
 
 @main_routes.route('/api/products')
 def list_products():
-
-    current_directory = os.path.dirname(os.path.abspath(__file__))
-    path_json = os.path.join(current_directory, '..', 'fakeDB/produtos.json')
-    
-    try:
-        with open(path_json, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        return jsonify(data)
-    except FileNotFoundError:
-        return jsonify({"erro": "Arquivo não encontrado"}), 404
+    products = Product.query.all()
+    products_dict = [product.to_dict() for product in products]
+    return jsonify(products_dict)
 
 
 @main_routes.route('/api/productInfo/<prod_id>')
 def list_info(prod_id):
-    current_directory = os.path.dirname(os.path.abspath(__file__))
-    path_json = os.path.join(current_directory, '..', 'fakeDB', 'individualProducts', f'produto{prod_id}.json')
-
-    try:
-        with open(path_json, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        return jsonify(data)
-    except FileNotFoundError:
-        return jsonify({"erro": "Arquivo não encontrado"}), 404
+    product = Product.query.get(prod_id)
+    if product:
+        return jsonify(product.to_dict())
+    return jsonify({"erro": "Produto não encontrado"}), 404
