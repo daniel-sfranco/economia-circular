@@ -54,6 +54,16 @@ function loadInfo(id) {
       }
       document.getElementById("quantity").innerHTML = "Quantidade: " + data.quantity;
 
+      const contactBtn = document.getElementById("contactBtn");
+      
+      // Verifica se o contato existe e não está vazio
+      if (data.contact_link && data.contact_link.trim() !== "") {
+          contactBtn.href = data.contact_link;
+          contactBtn.style.display = "inline-block"; 
+      } else {
+          contactBtn.style.display = "none"; // Esconde o botão se não houver link
+      }
+
       const mainImageEl = document.getElementById("product-main-image"); 
       const thumbnailsContainer = document.getElementById("product-thumbnails");
       const fallbackImage = '/static/assets/image_not_found.png';

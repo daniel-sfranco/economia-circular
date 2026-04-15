@@ -74,19 +74,18 @@ function formatElapsedTime(dataISO) {
 function createCard(produto) {
     const imagemFallback = '/static/assets/image_not_found.png';
     
-    // Suporte tanto para os novos nomes da API (Name, Product_ID) quanto os antigos do JSON
-    const nome = produto.Name || produto.nome;
-    const id = produto.Product_ID || produto.id || 1;
-    const dataPostagem = produto.Post_Date || produto.tempo;
+    const nome = produto.Name
+    const id = produto.Product_ID;
+    const dataPostagem = produto.Post_Date;
     
-    // Se a data for ISO (tiver um 'T'), usa a formatação nova. Senão, mantém a original.
+    
     const tempoFormatado = dataPostagem && dataPostagem.includes("T") ? formatElapsedTime(dataPostagem) : dataPostagem;
 
     return `
         <div class="item">
             <a href="product?id=${id}">
                 <img 
-                    src="${produto.imagem || imagemFallback}" 
+                    src="${produto.Image || imagemFallback}" 
                     alt="${nome}" 
                     onerror="this.onerror=null; this.src='${imagemFallback}';"
                 >

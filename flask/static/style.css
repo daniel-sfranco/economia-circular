@@ -538,6 +538,30 @@ a {
     align-items: flex-start; 
 }
 
+.contact-btn {
+    display: inline-block;
+    background-color: #449800; 
+    color: #ffffff;
+    font-family: 'Title', Arial, sans-serif;
+    font-size: 1.4rem;
+    text-align: center;
+    text-decoration: none;
+    padding: 0.8rem 2rem;
+    margin-top: 1.5rem; 
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(68, 152, 0, 0.2);
+    width: fit-content;
+}
+
+.contact-btn:hover {
+    background-color: #ea7525; 
+    color: #ffffff;
+    transform: translateY(-3px); 
+    box-shadow: 0 6px 15px rgba(234, 117, 37, 0.3);
+}
+
 
 .product-image-container {
     flex: 0 0 45%; 
