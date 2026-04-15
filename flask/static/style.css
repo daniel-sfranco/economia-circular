@@ -83,8 +83,7 @@ header {
     transition: color 0.12s ease;
 }
 
-.header-btn:hover,
-.header-btn:focus {
+.header-btn:hover{
     color: #ea7525; 
     outline: none;
 }
@@ -126,7 +125,7 @@ header h1 {
     left: 20%; 
     top: 50%;
     transform: translate(-50%, -50%);
-    max-height: 20rem; 
+    max-height: 5rem; 
     height: auto;
 }
 
@@ -164,54 +163,45 @@ header h1 {
 }
 
 #hero::before {
-  content: "";            /* Necessário para o pseudo-elemento existir */
+  content: "";           
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   
-  /* 1. Camada Levemente Mais Escura */
-  /* Ajuste o último número (0.4) para mais escuro (ex: 0.6) ou mais claro (ex: 0.2) */
   background-color: rgba(0, 0, 0, 0.4); 
   
-  /* 2. Efeito de Blur (Desfoque) aplicado ao que está ATRÁS desta camada */
-  /* Requer prefixo -webkit- para compatibilidade com Chrome/Safari */
   -webkit-backdrop-filter: blur(8px); 
-  backdrop-filter: blur(8px);         /* Ajuste os 8px conforme preferir */
+  backdrop-filter: blur(8px);         
   
-  /* Garante que fique acima do vídeo/imagem de fundo, mas abaixo da logo */
   z-index: 5; 
 }
 
-/* --- O Retângulo Translúcido --- */
 .hero-content {
     position: relative;
-    z-index: 8; /* Fica exatamente no meio: acima do blur (5), mas os itens dentro dele ficam no topo */
-    
-    /* A Cor Off-White (#fff9f3) em formato RGBA para permitir transparência. 
-       O 0.85 no final significa 85% de opacidade. Altere se quiser mais transparente! */
+    z-index: 8; 
+
     background-color: rgba(255, 249, 243, 0.85); 
     
-    /* Formato do retângulo */
-    border-radius: 24px; /* Bordas arredondadas */
+
+    border-radius: 24px; 
     padding: 25px 40px;
     
-    /* Mantém a logo e o texto empilhados certinho dentro da caixa */
+
     display: flex;
     flex-direction: column;
     align-items: center;
     
-    /* Uma sombra bem difusa e elegante para destacar o cartão do fundo */
+ 
     box-shadow: 0 10px 30px rgba(68, 152, 0, 0.2);
 
-    opacity: 0; /* Garante que o cartão esteja invisível no milissegundo 0 */
-    /* A mágica está no cubic-bezier: ele faz a animação começar rápida e desacelerar suavemente no final */
+    opacity: 0; 
     animation: organicEnter 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .hero-text {
-  /* === REDIMENSIONAMENTO === */
+
   width: 65vw;       
   height: auto;       
   
@@ -222,35 +212,33 @@ header h1 {
 }
 
 .hero-subtitle {
-    /* Removemos o position: absolute antigo. Voltamos para o fluxo normal do Flexbox */
-    position: relative;
-    z-index: 15; /* Maior que o da logo (10) para ficar por cima se necessário */
     
-    color: #fff9f3; /* Texto branco */
+    position: relative;
+    z-index: 15; 
+    
+    color: #fff9f3; 
     font-family: 'Body', Arial, sans-serif; 
     font-size: 1.6rem;
     text-align: center;
     font-weight: bold;
-    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7); /* Sombra para leitura */
-    max-width: 90%; /* Evita encostar nas bordas no celular */
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7); 
+    max-width: 90%; 
 
     opacity: 0; 
-    /* O "0.6s" antes do "forwards" é o atraso. O texto espera o cartão começar a subir para depois aparecer! */
     animation: textFadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
 }
 
 @keyframes organicEnter {
     0% {
         opacity: 0;
-        transform: translateY(50px) scale(0.95); /* Começa mais abaixo e levemente menor */
+        transform: translateY(50px) scale(0.95); 
     }
     100% {
         opacity: 1;
-        transform: translateY(0) scale(1); /* Posição e tamanho originais */
+        transform: translateY(0) scale(1); 
     }
 }
 
-/* Animação para o texto (Subtítulo) */
 @keyframes textFadeUp {
     0% {
         opacity: 0;
@@ -516,12 +504,10 @@ a {
 .action-btn.user::before  { background-image: url('assets/Usuario/usuario_verde.png'); }
 .action-btn.user::after   { background-image: url('assets/Usuario/usuario_laranja.png'); }
 
-.action-btn:hover::after,
-.action-btn:focus::after {
+.action-btn:hover::after{
     opacity: 1;
 }
-.action-btn:hover::before,
-.action-btn:focus::before {
+.action-btn:hover::before {
     opacity: 0;
 }
 
@@ -530,27 +516,178 @@ a {
     .header-actions { right: 0.6rem; gap: 1rem; }
 }
 
-#product-info {
-    width: 100vh;
-    height: 60vh;
-    display: flex;
-    flex-direction: column;
+.product-page-container {
+    max-width: 1200px; 
+    margin: 2rem auto; 
+    padding: 0 2rem;
 }
+
+.product-title {
+    font-family: 'Title', Arial, sans-serif;
+    font-size: 2.2rem;
+    color: #111;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.product-content {
+    display: flex;
+    flex-direction: row;
+    gap: 3rem; 
+    align-items: flex-start; 
+}
+
+
+.product-image-container {
+    flex: 0 0 45%; 
+    display: flex;
+    justify-content: center;
+    padding-top: 2%;
+}
+
 
 .product-image {
-    width: 250px; 
-    flex: 0 0 auto;   
-    height: 360px;    
-    border-radius: 16px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); 
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-    border: 1px solid #f0f0f0;
+    width: 100%;
+    max-width: 70vh; 
+    height: auto;
+    border-radius: 8px; 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+    border: 1px solid #e0e0e0;
+    object-fit: contain; 
+    background-color: #fff;
 }
 
-.product-image:hover{
-    transform: scale(1.04) translateY(-4px); 
-    box-shadow: 0 12px 24px rgba(68, 152, 0, 0.3); 
-    background-color: #fffdfa; 
+
+.product-description {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.seller-date-row {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    width: 99%;
+}
+
+.product-date {
+    color: #449800; 
+    font-size: 1.1rem; 
+    margin: 0;
+    text-align: right; 
+    font-family: 'Body', Arial, sans-serif;
+}
+
+
+.product-seller {
+    color: #449800; 
+    font-size: 1.1rem;
+    margin: 0;
+    text-align: left;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
+.product-price {
+    font-size: 3rem;
+    color: #ea7525; 
+    font-weight: bold;
+    margin: 0.5rem 0;
+    font-family: 'Body', Arial, sans-serif;
+}
+
+.accordion-button {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: #449800; 
+    padding: 0;
+    margin-top: 1.5rem;
+    font-size: 1.5rem; 
+    font-family: 'Title', Arial, sans-serif;
+    cursor: pointer;
+    transition: color 0.12s ease;
+    display: block;
+    text-align: left;
+    outline: none;
+
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.accordion-button:hover {
+    color: #ea7525; 
+    background: transparent; 
+}
+
+.accordion-button::after {
+    display: inline-block;
+    content: '';
+    width: 1.2rem; 
+    height: 1.2rem;
+    
+    background-image: url('assets/Arrows/seta_verde.png');
+    transform: rotate(-90deg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    
+
+    transition: transform 0.3s ease, background-image 0.12s ease;
+}
+
+.accordion-button:hover::after {
+    background-image: url('assets/Arrows/seta_laranja.png');
+}
+
+.accordion-button.active::after {
+    transform: rotate(90deg);
+}
+
+.accordion-button.active {
+    color: #ea7525;
+}
+.accordion-button.active::after {
+    background-image: url('assets/Arrows/seta_laranja.png');
+}
+
+.product-details {
+    max-height: 0;
+    overflow: hidden;
+    margin-top: 1.5rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    font-size: 1.3rem;
+    line-height: 1.6;
+    color: #333;
+    text-align: justify;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-wrap: break-word;
+
+    -webkit-hyphens: auto; 
+    -ms-hyphens: auto;    
+    hyphens: auto;
+
+    transition: max-height 0.4s ease-out, margin-top 0.4s ease-out;
+}
+
+.product-details.show {
+    max-height: 500vh;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+
+    transition: max-height 0.5s cubic-bezier(1, 0, 1, 0);
 }
 
 .sidebar h2 {

@@ -1,18 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div id="product-info">
-    <div class="product-image-container">
-        <img class="product-image" src="{{ url_for('static', filename='assets/image_not_found.png') }}" alt="Imagem do Produto">
+<div id="product-info" class="product-container">
+    <div class = "product-content">
+        <div class="product-image-container">
+            <img class="product-image" src="{{ url_for('static', filename='assets/image_not_found.png') }}" alt="Imagem do Produto">
+        </div>
+        
+        <div class="product-description">
+            <h1 id="prodName" class="product-title"></h1>
+
+            <hr class="divider">
+
+            <div class="seller-date-row">
+                <p id="seller" class="product-seller"></p>
+                <p id="date" class="product-date"></p>
+            </div>
+
+            <p id="cost" class="product-price"></p>
+            <p id="quantity" class="product-quantity"></p>
+            <button id="descToggle" class="accordion-button">DESCRIÇÃO</button>
+
+            <hr class="divider">
+
+            <div id="description" class="product-details"></div>
+        </div>
+        </div>
     </div>
-    <div class="product-description">
-        <p id="prodName"></p>
-        <p id="seller"></p>
-        <p id="cost"></p>
-        <p id="date"></p>
-        <p id="quantity"></p>
-        <p id="description"></p>
-    </div>
+    
 </div>
 
 
