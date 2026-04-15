@@ -57,8 +57,8 @@ function loadInfo(id) {
       const contactBtn = document.getElementById("contactBtn");
       
       // Verifica se o contato existe e não está vazio
-      if (data.contact_link && data.contact_link.trim() !== "") {
-          contactBtn.href = data.contact_link;
+      if (data.contact_info && data.contact_info.trim() !== "") {
+          contactBtn.href = "https://wa.me/55" + data.contact_info;
           contactBtn.style.display = "inline-block"; 
       } else {
           contactBtn.style.display = "none"; // Esconde o botão se não houver link
