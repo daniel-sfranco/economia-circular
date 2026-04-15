@@ -542,20 +542,92 @@ a {
 .product-image-container {
     flex: 0 0 45%; 
     display: flex;
-    justify-content: center;
+    flex-direction: row; 
+    gap: 1rem;
+    align-items: flex-start;
     padding-top: 2%;
 }
 
 
+.product-thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding-left: 0.8rem;
+    width: 65px; 
+    flex-shrink: 0;
+}
+
+
+.thumbnail-img {
+    width: 100%;
+    height: 65px;
+    object-fit: cover;
+    border: 2px solid transparent; 
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.thumbnail-img:hover {
+    opacity: 1;
+    border-color: #bbb;
+}
+
+.thumbnail-img.active {
+    opacity: 1;
+    border-color: #ea7525; 
+}
+
+.product-main-image-wrapper {
+    flex: 1; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh; 
+    width: 100%;
+    overflow: hidden; 
+    border-radius: 8px;
+    background-color: #fcfcfc;
+    border: 1px solid #e0e0e0;
+}
+
 .product-image {
     width: 100%;
-    max-width: 70vh; 
-    height: auto;
-    border-radius: 8px; 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
-    border: 1px solid #e0e0e0;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer; 
+    transition: transform 0.3s ease;
+}
+
+.product-image:hover {
+    transform: scale(1.03); 
+}
+
+
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 2000; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.65); 
+    backdrop-filter: blur(5px); 
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    max-width: 90%;
+    max-height: 90%;
     object-fit: contain; 
-    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.5);
 }
 
 

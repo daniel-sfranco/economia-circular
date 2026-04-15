@@ -4,7 +4,10 @@
 <div id="product-info" class="product-container">
     <div class = "product-content">
         <div class="product-image-container">
-            <img class="product-image" src="{{ url_for('static', filename='assets/image_not_found.png') }}" alt="Imagem do Produto">
+            <div id="product-thumbnails" class="product-thumbnails"></div>
+            <div class = "product-main-image-wrapper">
+                <img id = "product-main-image" class="product-image" src="{{ url_for('static', filename='assets/image_not_found.png') }}" alt="Imagem do Produto">
+            </div>
         </div>
         
         <div class="product-description">
@@ -30,7 +33,9 @@
     
 </div>
 
-
+<div id="imageModal" class="modal">
+    <img class="modal-content" id="fullImage">
+</div>
 <script src="{{ url_for('static', filename='productDescription.js') }}"></script>
 
 {% endblock %}
