@@ -1,34 +1,13 @@
-window.onload = function () {
+function bootProductPage() {
     const params = (new URL(document.location)).searchParams;
     const produtId = params.get('id');
-    loadInfo(produtId)
+    loadInfo(produtId);
 }
 
-function formatElapsedTime(dataISO) {
-    const now = new Date();
-    const post = new Date(dataISO);
-    const elapsedSeconds = Math.floor((now - post) / 1000);
-
-    if (elapsedSeconds < 60) return "agora mesmo";
-
-    const intervals = [
-        { name: "ano", seconds: 31536000 },
-        { name: "mês", seconds: 2592000 },
-        { name: "dia", seconds: 86400 },
-        { name: "hora", seconds: 3600 },
-        { name: "minuto", seconds: 60 }
-    ];
-
-    for (const interval of intervals) {
-        const count = Math.floor(elapsedSeconds / interval.seconds);
-        if (count >= 1) {
-            let unit = interval.name;
-            if (count > 1) {
-                unit = (unit === "mês") ? "meses" : unit + "s";
-            }
-            return `há ${count} ${unit}`;
-        }
-    }
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootProductPage);
+} else {
+    bootProductPage();
 }
 
 function loadInfo(id) {
