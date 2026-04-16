@@ -79,14 +79,14 @@ function createCard(produto) {
     const id = produto.product_id || produto.id || 1;
     const dataPostagem = produto.post_date || produto.tempo;
     
-    // Se a data for ISO (tiver um 'T'), usa a formatação nova. Senão, mantém a original.
+    
     const tempoFormatado = dataPostagem && dataPostagem.includes("T") ? formatElapsedTime(dataPostagem) : dataPostagem;
 
     return `
         <div class="item">
             <a href="product?id=${id}">
                 <img 
-                    src="${produto.imagem || imagemFallback}" 
+                    src="${produto.Image || imagemFallback}" 
                     alt="${nome}" 
                     onerror="this.onerror=null; this.src='${imagemFallback}';"
                 >

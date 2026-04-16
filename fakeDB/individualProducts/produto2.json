@@ -5,5 +5,13 @@
   "cost": 120.50,
   "post_date": "2026-04-05T19:00:00Z",
   "quantity": 4,
-  "description": "Cadeira de escritório ergonômica com regulagem de altura e rodinhas."
+  "description": "Cadeira de escritório ergonômica com regulagem de altura e rodinhas.",
+  "images": [
+    "/static/assets/example_images/chair1.jpg",
+    "/static/assets/example_images/chair2.jpg",
+    "/static/assets/example_images/chair3.jpg",
+    "/static/assets/example_images/chair4.jpg",
+    "/static/assets/example_images/chair5.jpg"
+  ],
+  "contact_info": "85999980604"
 }
