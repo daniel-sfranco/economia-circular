@@ -71,12 +71,12 @@ function loadInfo(id) {
 
       // Fallback: Se não houver imagens, usa a padrão e esconde as miniaturas
       if (!imagesArray || !Array.isArray(imagesArray) || imagesArray.length === 0) {
-          console.log("Nenhuma imagem no JSON. Imagem de fallback ativada.");
+          console.log("Nenhuma imagem no banco. Imagem de fallback ativada.");
           if (mainImageEl) mainImageEl.src = fallbackImage;
           if (thumbnailsContainer) thumbnailsContainer.style.display = 'none';
       } else {
-          // Limita a 5 imagens
-          imagesArray = imagesArray.slice(0, 5);
+          // 1. Limita a 5 imagens
+          imagesArray = imagesArray.slice(0, 5).map(imgName => `/static/uploads/${imgName}`);
 
           // Define a primeira imagem como a principal inicial
           if (mainImageEl) mainImageEl.src = imagesArray[0];
@@ -85,25 +85,20 @@ function loadInfo(id) {
               thumbnailsContainer.style.display = 'flex';
               thumbnailsContainer.innerHTML = ''; // Limpa caso haja algo antes
 
-              // Cria as miniaturas dinamicamente
               imagesArray.forEach((imgUrl, index) => {
                   const thumb = document.createElement('img');
                   thumb.src = imgUrl;
                   thumb.className = 'thumbnail-img';
                   
-                  // Se for a primeira miniatura, já começa com a borda de "ativa"
                   if (index === 0) {
                       thumb.classList.add('active');
                   }
 
                   // Evento de clique para trocar a imagem principal
                   thumb.addEventListener('click', function() {
-                      // Troca o src da imagem grande
                       mainImageEl.src = imgUrl;
 
-                      // Remove a classe 'active' de todas as miniaturas
                       document.querySelectorAll('.thumbnail-img').forEach(t => t.classList.remove('active'));
-                      // Adiciona a classe 'active' apenas na miniatura clicada
                       this.classList.add('active');
                   });
 
