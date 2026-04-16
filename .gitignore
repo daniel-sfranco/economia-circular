@@ -16,3 +16,6 @@ instance/
 .DS_Store
 Thumbs.db
 mock.db
+
+# Uploads de imagens
+static/uploads/
