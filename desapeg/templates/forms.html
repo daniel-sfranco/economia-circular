@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="product-registration-container">
+    <h2>Cadastrar Produto</h2>
+    
+    <form method="POST" action="" enctype="multipart/form-data" class="product-form" novalidate autocomplete="off">
+        {{ form.hidden_tag() }}
+        
+        <div class="name-field">
+            {{ form.prod_name.label(class="field-label") }}
+            {{ form.prod_name(class="input-text", placeholder="Ex: Livro de Algoritmos, Calculadora HP...") }}
+            {% for error in form.prod_name.errors %}
+                <div class="error-message">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="desc-field">
+            {{ form.description.label(class="field-label") }}
+            {{ form.description(class="input-textarea", rows="4", placeholder="Descreva seu produto e suas condições") }}
+            {% for error in form.description.errors %}
+                <div class="error-message">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="price-quantity-group">
+            <div class="price-field">
+                {{ form.price.label(class="field-label") }}
+                {{ form.price(class="input-number", step="0.01", placeholder="0.00") }}
+                {% for error in form.price.errors %}
+                    <div class="error-message">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="quantity-field">
+                {{ form.quantity.label(class="field-label") }}
+                {{ form.quantity(class="input-number", min="0") }}
+                {% for error in form.quantity.errors %}
+                    <div class="error-message">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="images-field">
+            {{ form.images.label(class="field-label") }}
+            {{ form.images(class="input-file", id="image-upload", accept=".jpg,.jpeg,.png", multiple=True) }}
+            <small class="help-text">Selecione até 5 arquivos simultaneamente.</small>
+            {% for error in form.images.errors %}
+                <div class="error-message">{{ error }}</div>
+            {% endfor %}
+            <div id="image-preview-container" class="image-preview-container"></div>
+        </div>
+
+        <div class="submit-action">
+            {{ form.submit(class="submit-button") }}
+        </div>
+    </form>
+</div>
+
+<div id="image-modal" class="modal">
+    <img class="modal-content" id="modal-image">
+</div>
+<script src="{{ url_for('static', filename='forms.js') }}"></script>
+{% endblock %}

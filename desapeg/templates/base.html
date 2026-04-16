@@ -9,7 +9,6 @@
 </head>
 <body>
     <header>
-        <!-- <button id="hamburger" onclick="toggleSidebar()" aria-label="Abrir menu">☰</button> -->
         <h1 class="visually-hidden">Economia Circular</h1>
         <a href="/" class="brand-link" aria-label="Ir para a página inicial">
             <img src="{{ url_for('static', filename='assets/Logo_Name_Alternative.png') }}" alt="Economia Circular" class="brand-logo">
@@ -23,19 +22,18 @@
 
         <div class="header-actions">
             <button class="action-btn search" aria-label="Buscar"></button>
-            <button class="action-btn user" aria-label="Perfil do usuário"></button>
+            <button class="action-btn user" aria-label="Perfil do usuário" id="user-btn" onclick="toggleUserSidebar()"></button>
         </div>
     </header>
 
     {% block hero %}{% endblock %}
 
-    <div id="sidebar" class="sidebar">
-        <h2>Opções de Busca</h2>
+    <div id="user-sidebar" class="sidebar">
+        <h2>Meu Perfil</h2>
         <ul>
-            <li>Eletrodomésticos</li>
-            <li>Roupas</li>
-            <li>Eletrônicos</li>
-            <li>Móveis</li>
+            <li><a href="#">Configurações</a></li>
+            <li><a href="{{ url_for('main_routes.formspage') }}">Cadastrar novo Produto</a></li>
+            <li><a href="#">Editar Perfil</a></li>
         </ul>
     </div>
 
