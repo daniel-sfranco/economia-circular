@@ -44,9 +44,10 @@ def formspage():
 
         images_str = ",".join(saved_image_names)
 
+        # Criação do objeto
         new_product = Product(
             name=prod_name,
-            seller="Usuário de Teste",
+            seller="Usuário de Teste", # depois ligar o usuário de verdade ao produto adicionado
             cost=price,
             quantity=quantity,
             description=description,
