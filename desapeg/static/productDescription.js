@@ -13,7 +13,7 @@ function loadInfo(id) {
       return response.json();
     })
     .then(data => {
-      document.getElementById("prodName").innerHTML = data.product_name;
+      document.getElementById("prodName").innerHTML = data.name;
       document.getElementById("seller").innerHTML = data.seller;
       document.getElementById("cost").innerHTML = data.cost;
       document.getElementById("date").innerHTML = data.post_date;
