@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, MultipleFileField
 from wtforms import StringField, TextAreaField, DecimalField, IntegerField, SubmitField
-from wtforms.validators import DataRequired, NumberRange, ValidationError
-
+from wtforms.validators import DataRequired, InputRequired, NumberRange, ValidationError
 #validação customizada para máximo de arquivos, máximo de casas decimais do preço e comprimento máximo dos textos.
 def max_files(max_uploads):
     def _max_files(form, field):
@@ -39,7 +38,7 @@ class ProductForm(FlaskForm):
     ])
     
     price = DecimalField('Preço do Produto (R$)', places = 2, validators=[
-        DataRequired(message="O preço é obrigatório. Se seu produto é uma DOAÇÃO, coloque o preço como 0"),
+        InputRequired(message="O preço é obrigatório. Se seu produto é uma DOAÇÃO, coloque o preço como 0"),
         NumberRange(min=0.0, message="O preço não pode ser negativo."),
         NumberRange(max=10000.0, message="O preço não pode ser mais de 10 mil reais."),
         max_decimal_places(2)

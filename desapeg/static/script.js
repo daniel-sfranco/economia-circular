@@ -82,11 +82,19 @@ function createCard(produto) {
     
     const tempoFormatado = dataPostagem && dataPostagem.includes("T") ? formatElapsedTime(dataPostagem) : dataPostagem;
 
+    let imagemSrc = imagemFallback;
+
+    if (produto.images && produto.images.length > 0) {
+        imagemSrc = `/static/uploads/${produto.images[0]}`;
+    } else if (produto.Image) {
+        imagemSrc = produto.Image;
+    }
+
     return `
         <div class="item">
             <a href="product?id=${id}">
                 <img 
-                    src="${produto.Image || imagemFallback}" 
+                    src="${imagemSrc}" 
                     alt="${nome}" 
                     onerror="this.onerror=null; this.src='${imagemFallback}';"
                 >
