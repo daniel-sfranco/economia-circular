@@ -4,7 +4,7 @@
 <div class="product-registration-container">
     <h2>Cadastrar Produto</h2>
     
-    <form method="POST" action="" enctype="multipart/form-data" class="product-form" novalidate>
+    <form method="POST" action="" enctype="multipart/form-data" class="product-form" novalidate autocomplete="off">
         {{ form.hidden_tag() }}
         
         <div class="name-field">
@@ -43,11 +43,12 @@
 
         <div class="images-field">
             {{ form.images.label(class="field-label") }}
-            {{ form.images(class="input-file", accept=".jpg,.jpeg,.png", multiple=True) }}
+            {{ form.images(class="input-file", id="image-upload", accept=".jpg,.jpeg,.png", multiple=True) }}
             <small class="help-text">Selecione até 5 arquivos simultaneamente.</small>
             {% for error in form.images.errors %}
                 <div class="error-message">{{ error }}</div>
             {% endfor %}
+            <div id="image-preview-container" class="image-preview-container"></div>
         </div>
 
         <div class="submit-action">
@@ -55,4 +56,9 @@
         </div>
     </form>
 </div>
+
+<div id="image-modal" class="modal">
+    <img class="modal-content" id="modal-image">
+</div>
+<script src="{{ url_for('static', filename='forms.js') }}"></script>
 {% endblock %}

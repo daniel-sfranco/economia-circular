@@ -30,8 +30,8 @@ def formspage():
         price = form.price.data
         images = request.files.getlist(form.images.name);
 
-        print(f"Sucesso! Produto: {prod_name} | Preço: {price} | Qtd: {description}")
-        print(f"Imagens enviadas: {len(images)}")
+        print(f"Sucesso! Produto: {prod_name} | Preço: {price} | Qtd: {quantity} | Desc: {description}")
+        print(f"Imagens enviadas: {images} (total: {len(images)} imagens)")
 
         return redirect(url_for('main_routes.formspage'))
     
