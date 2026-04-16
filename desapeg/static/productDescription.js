@@ -40,8 +40,7 @@ function loadInfo(id) {
       return response.json();
     })
     .then(data => {
-      // 1. Preenche os Textos
-      document.getElementById("prodName").innerHTML = data.product_name;
+      document.getElementById("prodName").innerHTML = data.name;
       document.getElementById("seller").innerHTML = data.seller;
       document.getElementById("description").innerHTML = data.description;
       document.getElementById("date").innerHTML = formatElapsedTime(data.post_date);

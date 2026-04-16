@@ -1,0 +1,24 @@
+from extensions import db
+
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    seller = db.Column(db.String(120), nullable=False)
+    cost = db.Column(db.Float, nullable=False)
+    post_date = db.Column(db.DateTime, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.String(200), nullable=True)
+
+    def __repr__(self):
+        return f'<Product {self.name}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'seller': self.seller,
+            'cost': self.cost,
+            'post_date': self.post_date,
+            'quantity': self.quantity,
+            'description': self.description
+        }
