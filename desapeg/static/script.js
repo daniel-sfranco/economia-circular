@@ -1,12 +1,13 @@
 var lastScrollTop = 0;
 
-// function toggleSidebar() {
-//     var sidebar = document.getElementById('sidebar');
-//     var overlay = document.getElementById('overlay');
-//     sidebar.classList.toggle('open');
-//     overlay.classList.toggle('visible');
-//     document.documentElement.classList.toggle('sidebar-open');
-// }
+function toggleUserSidebar() {
+    var sidebar = document.getElementById('user-sidebar');
+    var overlay = document.getElementById('overlay');
+    
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('visible');
+    document.documentElement.classList.toggle('sidebar-open');
+}
 
 window.addEventListener('scroll', function() {
     var st = window.pageYOffset || document.documentElement.scrollTop;
@@ -22,11 +23,11 @@ window.addEventListener('scroll', function() {
 });
 
 document.addEventListener('click', function(event) {
-    var sidebar = document.getElementById('sidebar');
+    var sidebar = document.getElementById('user-sidebar');
     var overlay = document.getElementById('overlay');
-    var hamburger = document.getElementById('hamburger');
+    var user_btn = document.getElementById('user-btn');
 
-    if (sidebar && sidebar.classList.contains('open') && !sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+    if (sidebar && sidebar.classList.contains('open') && !sidebar.contains(event.target) && !user_btn.contains(event.target)) {
         sidebar.classList.remove('open');
         overlay.classList.remove('visible');
         document.documentElement.classList.remove('sidebar-open');
@@ -36,13 +37,12 @@ document.addEventListener('click', function(event) {
 const overlayEl = document.getElementById('overlay');
 if (overlayEl) {
     overlayEl.addEventListener('click', function() {
-        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('user-sidebar').classList.remove('open');
         this.classList.remove('visible');
         document.documentElement.classList.remove('sidebar-open');
     });
 }
 
-// Função de formatação de tempo (adicionada pelo seu amigo)
 function formatElapsedTime(dataISO) {
     const now = new Date();
     const post = new Date(dataISO);
