@@ -1,24 +1,22 @@
 from extensions import db
 
 class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    seller = db.Column(db.String(120), nullable=False)
-    cost = db.Column(db.Float, nullable=False)
-    post_date = db.Column(db.DateTime, nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
-    description = db.Column(db.String(200), nullable=True)
+    __tablename__ = 'product'
 
-    def __repr__(self):
-        return f'<Product {self.name}>'
+    Product_ID = db.Column('product_id', db.Integer, primary_key=True)
+    Name = db.Column('name', db.String(30))
+    Description = db.Column('description', db.String(500))
+    Price = db.Column('price', db.Float)
+    Post_Date = db.Column('post_date', db.DateTime)
+    Quantity = db.Column('quantity', db.Integer)
     
+    User_ID = db.Column('user_id', db.Integer, db.ForeignKey('users.user_id'))
+
     def to_dict(self):
         return {
-            'id': self.id,
-            'name': self.name,
-            'seller': self.seller,
-            'cost': self.cost,
-            'post_date': self.post_date,
-            'quantity': self.quantity,
-            'description': self.description
+            "id": self.Product_ID,
+            "name": self.Name,
+            "description": self.Description,
+            "price": self.Price,
+            "quantity": self.Quantity
         }
