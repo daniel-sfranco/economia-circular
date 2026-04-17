@@ -1,7 +1,16 @@
 import unittest
 import io
+from PIL import Image
 from app import app
 from extensions import db
+
+# Função auxiliar para criar uma imagem válida em memória
+def create_test_image():
+    img = Image.new('RGB', (10, 10), color='red')
+    img_bytes = io.BytesIO()
+    img.save(img_bytes, format='JPEG')
+    img_bytes.seek(0)
+    return img_bytes
 
 class ProductFormTestCase(unittest.TestCase):
 
@@ -27,7 +36,7 @@ class ProductFormTestCase(unittest.TestCase):
             'description': 'Descrição teste',
             'price': '100.00',
             'quantity': '10',
-            'images': (io.BytesIO(b"uma imagem bonita"), 'test.jpg')
+            'images': (create_test_image(), 'test.jpg')
         }
 
         response = self.client.post(
