@@ -1,4 +1,4 @@
-from extensions import db
+from desapeg.extensions import db
 from datetime import datetime, timezone # Para a data automática
 
 class Product(db.Model):

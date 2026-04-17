@@ -1,10 +1,10 @@
 import json
 import os
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, current_app
-from models.product import Product
-from forms import ProductForm
-from imageHandler import compress_and_save_image
-from extensions import db
+from .models.product import Product
+from .forms import ProductForm
+from .imageHandler import compress_and_save_image
+from .extensions import db
 
 main_routes = Blueprint('main_routes', __name__)
 
