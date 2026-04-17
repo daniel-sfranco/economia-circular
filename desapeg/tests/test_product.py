@@ -1,8 +1,9 @@
 import unittest
 import io
 from PIL import Image
-from app import app
-from extensions import db
+from desapeg.app import app
+from desapeg.extensions import db
+from desapeg.models.product import Product
 
 # Função auxiliar para criar uma imagem válida em memória
 def create_test_image():
@@ -12,7 +13,7 @@ def create_test_image():
     img_bytes.seek(0)
     return img_bytes
 
-class ProductFormTestCase(unittest.TestCase):
+class ProductDBTestCase(unittest.TestCase):
 
     def setUp(self):
         app.config['TESTING'] = True
@@ -29,26 +30,32 @@ class ProductFormTestCase(unittest.TestCase):
             db.session.remove()
             db.drop_all()
 
-    def test_form_submission_valid(self):
-        # Simula upload de imagem para criar um produto
-        data = {
-            'prod_name': 'Produto Teste',
-            'description': 'Descrição teste',
-            'price': '100.00',
-            'quantity': '10',
-            'images': (create_test_image(), 'test.jpg')
-        }
-
+    def test_product_saved_in_db(self):
         response = self.client.post(
             '/forms',
-            data=data,
+            data={
+                'prod_name': 'Produto Teste',
+                'description': 'Descrição muito legal',
+                'price': '100.50',
+                'quantity': '10',
+                'images': (create_test_image(), 'test.jpg')
+            },
             content_type='multipart/form-data',
             follow_redirects=False
         )
 
-        # Deve redirecionar (formulário válido)
+        # 1. Verifica redirect
         self.assertEqual(response.status_code, 302)
-        self.assertIn('/forms', response.headers['Location'])
+
+        # 2. Verifica o produto no banco de dados
+        with app.app_context():
+            product = Product.query.first()
+
+            self.assertIsNotNone(product)
+            self.assertEqual(product.name, 'Produto Teste')
+            self.assertEqual(product.cost, 100.50)
+            self.assertEqual(product.quantity, 10)
+            self.assertEqual(product.description, 'Descrição muito legal')
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,9 +1,8 @@
 import unittest
 import io
 from PIL import Image
-from app import app
-from extensions import db
-from models.product import Product
+from desapeg.app import app
+from desapeg.extensions import db
 
 # Função auxiliar para criar uma imagem válida em memória
 def create_test_image():
@@ -13,7 +12,7 @@ def create_test_image():
     img_bytes.seek(0)
     return img_bytes
 
-class ProductDBTestCase(unittest.TestCase):
+class ProductFormTestCase(unittest.TestCase):
 
     def setUp(self):
         app.config['TESTING'] = True
@@ -30,32 +29,26 @@ class ProductDBTestCase(unittest.TestCase):
             db.session.remove()
             db.drop_all()
 
-    def test_product_saved_in_db(self):
+    def test_form_submission_valid(self):
+        # Simula upload de imagem para criar um produto
+        data = {
+            'prod_name': 'Produto Teste',
+            'description': 'Descrição teste',
+            'price': '100.00',
+            'quantity': '10',
+            'images': (create_test_image(), 'test.jpg')
+        }
+
         response = self.client.post(
             '/forms',
-            data={
-                'prod_name': 'Produto Teste',
-                'description': 'Descrição muito legal',
-                'price': '100.50',
-                'quantity': '10',
-                'images': (create_test_image(), 'test.jpg')
-            },
+            data=data,
             content_type='multipart/form-data',
             follow_redirects=False
         )
 
-        # 1. Verifica redirect
+        # Deve redirecionar (formulário válido)
         self.assertEqual(response.status_code, 302)
-
-        # 2. Verifica o produto no banco de dados
-        with app.app_context():
-            product = Product.query.first()
-
-            self.assertIsNotNone(product)
-            self.assertEqual(product.name, 'Produto Teste')
-            self.assertEqual(product.cost, 100.50)
-            self.assertEqual(product.quantity, 10)
-            self.assertEqual(product.description, 'Descrição muito legal')
+        self.assertIn('/forms', response.headers['Location'])
 
 if __name__ == '__main__':
     unittest.main()

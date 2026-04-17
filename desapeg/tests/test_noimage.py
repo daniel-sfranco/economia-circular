@@ -1,6 +1,6 @@
 import unittest
-from app import app
-from extensions import db
+from desapeg.app import app
+from desapeg.extensions import db
 
 class ProductFormTestCase(unittest.TestCase):
 
