@@ -1,6 +1,6 @@
 from faker import Faker
-from extensions import db
-from models.product import Product
+from desapeg.extensions import db
+from desapeg.models.product import Product
 
 fake = Faker('pt_BR')
 

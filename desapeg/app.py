@@ -1,7 +1,7 @@
 from flask import Flask
-from extensions import db
-from routes import *
-from models.product import Product
+from .extensions import db
+from .routes import *
+from .models.product import Product
 
 app = Flask(__name__)
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
