@@ -1,0 +1,177 @@
+/* Product Form Page */
+.product-registration-container {
+    max-width: 65vh; 
+    margin: 3rem auto; 
+    background-color: #ffffff; 
+    padding: 3rem;
+    border-radius: 16px; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.product-registration-container h2 {
+    font-family: 'Title', Arial, sans-serif;
+    font-size: 3rem; 
+    color: #449800; 
+    margin-bottom: 2rem;
+    text-align: center;
+    width: 100%;
+}
+
+.product-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; 
+}
+
+.field-label {
+    font-family: 'Title', Arial, sans-serif;
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 0.4rem;
+    display: block; 
+}
+
+.input-text,
+.input-textarea,
+.input-number,
+.input-file {
+    font-family: 'Body', Arial, sans-serif;
+    font-size: 1.1rem;
+    color: #333;
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    background-color: #fcfcfc;
+    border: 2px solid #449800; 
+    border-radius: 8px; 
+    box-sizing: border-box;
+    transition: all 0.3s ease; 
+    outline: none; 
+}
+
+.input-textarea {
+    resize: none;
+    height: 20vh;
+}
+
+.input-text:focus,
+.input-textarea:focus,
+.input-number:focus,
+.input-file:focus {
+    border-color: #ea7525; 
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(234, 117, 37, 0.2); 
+}
+
+.price-quantity-group {
+    display: flex;
+    gap: 1.5rem;
+    width: 100%;
+    flex-direction: row ;
+}
+
+.price-field,
+.quantity-field {
+    flex: 1; 
+}
+
+.input-file::file-selector-button {
+    background-color: #449800;
+    color: #ffffff;
+    font-family: 'Title', Arial, sans-serif;
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 1rem;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(68, 152, 0, 0.15);
+}
+
+.input-file::file-selector-button:hover {
+    background-color: #ea7525;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(234, 117, 37, 0.2);
+}
+
+.input-number::-webkit-outer-spin-button,
+.input-number::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.input-number[type=number] {
+    -moz-appearance: textfield;
+}
+
+.help-text {
+    font-family: 'Body', Arial, sans-serif;
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 0.3rem;
+    display: block;
+}
+
+.error-message {
+    font-family: 'Body', Arial, sans-serif;
+    font-size: 0.9rem;
+    color: #d93025; 
+    margin-top: 0.4rem;
+    font-weight: bold;
+}
+
+
+.submit-action {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center; 
+}
+
+.submit-button {
+    background-color: #449800; 
+    color: #ffffff;
+    font-family: 'Title', Arial, sans-serif;
+    font-size: 1.4rem;
+    text-align: center;
+    padding: 0.8rem 3rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(68, 152, 0, 0.2);
+    width: 100%; 
+}
+
+.submit-button:hover {
+    background-color: #ea7525; 
+    color: #ffffff;
+    transform: translateY(-3px); 
+    box-shadow: 0 6px 15px rgba(234, 117, 37, 0.3);
+}
+
+.image-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5vh;
+    margin-top: 1.5vh;
+}
+
+.preview-thumbnail {
+    width: 6vh;
+    height: 6vh;
+    object-fit: cover; 
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.preview-thumbnail:hover {
+    border-color: #ea7525; 
+    transform: scale(1.05); 
+}
