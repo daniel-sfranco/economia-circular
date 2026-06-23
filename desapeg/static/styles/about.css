@@ -1,0 +1,10 @@
+/* About Page */
+#about {
+    max-width: 60vw;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+#about p {
+    font-size: 1.5rem;
+    line-height: 1.8;
+}
