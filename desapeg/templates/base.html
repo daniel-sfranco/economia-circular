@@ -21,8 +21,12 @@
         </nav>
 
         <div class="header-actions">
-            <button class="action-btn search" aria-label="Buscar"></button>
-            <button class="action-btn user" aria-label="Perfil do usuário" id="user-btn" onclick="toggleUserSidebar()"></button>
+            <form action="#" method="GET" class="search-form" id="search-form">
+                <input type="text" name="q" id="search-input" class="search-input" placeholder="Buscar produtos..." aria-label="Campo de busca">
+                <button type="submit" class="action-btn search" id="search-btn" aria-label="Buscar"></button>
+            </form>
+
+            <button class="action-btn user" aria-label="Perfil do usuário" id="user-btn"        onclick="toggleUserSidebar()"></button>
         </div>
     </header>
 

@@ -189,3 +189,30 @@ window.addEventListener('scroll', function() {
         hero.style.opacity = opacidade;
     }
 });
+
+const searchForm = document.getElementById('search-form');
+const searchInput = document.getElementById('search-input');
+const searchBtn = document.getElementById('search-btn');
+
+if (searchForm && searchInput && searchBtn) {
+    searchBtn.addEventListener('click', function(e) {
+        if (!searchForm.classList.contains('active')) {
+            e.preventDefault();
+            searchForm.classList.add('active');
+            searchInput.focus();
+        } else {
+            if (searchInput.value.trim() === '') {
+                e.preventDefault();
+                searchForm.classList.remove('active');
+            }
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!searchForm.contains(e.target) && searchForm.classList.contains('active')) {
+            if (searchInput.value.trim() === '') {
+                searchForm.classList.remove('active');
+            }
+        }
+    });
+}
