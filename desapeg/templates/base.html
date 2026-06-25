@@ -10,8 +10,11 @@
 <body>
     <header>
         <h1 class="visually-hidden">Economia Circular</h1>
+
         <a href="/" class="brand-link" aria-label="Ir para a página inicial">
-            <img src="{{ url_for('static', filename='assets/Logo_Name_Alternative.png') }}" alt="Economia Circular" class="brand-logo">
+            <img src="{{ url_for('static', filename='assets/Logo_Name_Alternative.png') }}"
+                 alt="Economia Circular"
+                 class="brand-logo">
         </a>
 
         <nav class="header-nav" aria-label="Navegação principal">
@@ -21,10 +24,28 @@
         </nav>
 
         <div class="header-actions">
-            <button class="action-btn search" aria-label="Buscar"></button>
-            <button class="action-btn user" aria-label="Perfil do usuário" id="user-btn" onclick="toggleUserSidebar()"></button>
+            <button
+                class="action-btn search"
+                id="search-btn"
+                aria-label="Buscar">
+            </button>
+
+            <button
+                class="action-btn user"
+                aria-label="Perfil do usuário"
+                id="user-btn"
+                onclick="toggleUserSidebar()">
+            </button>
         </div>
     </header>
+
+    <div id="search-container" class="search-container">
+        <input
+            type="text"
+            id="search-input"
+            placeholder="Pesquisar produtos..."
+        >
+    </div>
 
     {% block hero %}{% endblock %}
 

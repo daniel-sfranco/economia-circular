@@ -189,3 +189,15 @@ window.addEventListener('scroll', function() {
         hero.style.opacity = opacidade;
     }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchBtn = document.getElementById('search-btn');
+    const searchContainer = document.getElementById('search-container');
+    const searchInput = document.getElementById('search-input');
+
+    if (searchBtn && searchContainer) {
+        searchBtn.addEventListener("click", () => {
+            searchContainer.classList.toggle("open");
+        });
+    }
+});

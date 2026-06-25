@@ -1008,3 +1008,44 @@ footer {
     width: 100%;
     position: relative;
 }
+
+.search-container {
+    display: none;
+    justify-content: center;
+
+    position: absolute;
+    top: 6rem;
+    left: 0;
+    width: 100%;
+
+    padding: 15px 0;
+
+    background-color: #fff9f3;
+
+    z-index: 899;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.search-container.open {
+    display: flex;
+}
+
+#search-input {
+    width: 60%;
+    max-width: 600px;
+
+    padding: 12px 20px;
+
+    border-radius: 25px;
+    border: 2px solid #449800;
+
+    font-size: 16px;
+    outline: none;
+
+    background-color: white;
+}
+
+#search-input:focus {
+    border-color: #ea7525;
+}
