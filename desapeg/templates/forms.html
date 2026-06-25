@@ -1,5 +1,7 @@
 {% extends "base.html" %}
-
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/forms.css') }}?">
+{% endblock %}
 {% block content %}
 <div class="product-registration-container">
     <h2>Cadastrar Produto</h2>
@@ -60,5 +62,5 @@
 <div id="image-modal" class="modal">
     <img class="modal-content" id="modal-image">
 </div>
-<script src="{{ url_for('static', filename='forms.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/forms.js') }}"></script>
 {% endblock %}

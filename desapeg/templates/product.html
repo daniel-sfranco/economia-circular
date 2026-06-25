@@ -1,5 +1,7 @@
 {% extends "base.html" %}
-
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/product.css') }}?">
+{% endblock %}
 {% block content %}
 <div id="product-info" class="product-container">
     <div class = "product-content">
@@ -39,6 +41,7 @@
 <div id="imageModal" class="modal">
     <img class="modal-content" id="fullImage">
 </div>
-<script src="{{ url_for('static', filename='productDescription.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/productDescription.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/productCard.js') }}"></script>
 
 {% endblock %}
