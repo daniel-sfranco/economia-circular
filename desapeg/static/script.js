@@ -79,8 +79,11 @@ function createCard(produto) {
     const id = produto.product_id || produto.id || 1;
     const dataPostagem = produto.post_date || produto.tempo;
     
-    
     const tempoFormatado = dataPostagem && dataPostagem.includes("T") ? formatElapsedTime(dataPostagem) : dataPostagem;
+
+    // lógica de formatação de preço
+    const preco = parseFloat(produto.cost);
+    const textoPreco = (preco === 0 || isNaN(preco)) ? "DOAÇÃO" : `R$ ${preco.toFixed(2).replace('.', ',')}`;
 
     let imagemSrc = imagemFallback;
 
@@ -100,6 +103,7 @@ function createCard(produto) {
                 >
                 <div class="item-info">
                     <div class="item-title">${nome}</div>
+                    <div class="item-price">${textoPreco}</div>
                     <div class="item-time">${tempoFormatado}</div>
                 </div>
             </a>
@@ -251,9 +255,14 @@ if (searchInput && searchDropdown) {
                                 imagemSrc = produto.Image;
                             }
 
-                            const precoFormatado = produto.cost 
-                                ? parseFloat(produto.cost).toFixed(2).replace('.', ',') 
-                                : '0,00';
+                            const valorPreco = parseFloat(produto.cost);
+                            let precoExibicao;
+
+                            if (isNaN(valorPreco) || valorPreco === 0) {
+                                precoExibicao = "DOAÇÃO";
+                            } else {
+                                precoExibicao = `R$ ${valorPreco.toFixed(2).replace('.', ',')}`;
+                            }
 
                             const item = document.createElement('a');
                             item.href = `/product?id=${produto.id}`;
@@ -263,10 +272,11 @@ if (searchInput && searchDropdown) {
                                 <img src="${imagemSrc}" alt="${produto.name}" class="search-dropdown-img" onerror="this.onerror=null; this.src='${imagemFallback}';">
                                 <div class="search-dropdown-info">
                                     <span class="search-dropdown-title">${produto.name}</span>
-                                    <span class="search-dropdown-price">R$ ${precoFormatado}</span>
+                                    <span class="search-dropdown-price">${precoExibicao}</span>
                                 </div>
                             `;
                             searchDropdown.appendChild(item);
+
                         });
                     }
                     searchDropdown.classList.add('active');

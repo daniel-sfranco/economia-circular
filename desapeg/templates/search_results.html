@@ -24,10 +24,19 @@
                             <div class="item-title">
                                 {{ produto.name }}
                             </div>
+                            
+                            <div class="item-price">
+                                {% if produto.cost == 0 %}
+                                    DOAÇÃO
+                                {% else %}
+                                    R$ {{ "%.2f"|format(produto.cost)|replace('.', ',') }}
+                                {% endif %}
+                            </div>
 
                             <div class="item-time">
                                 {{ produto.post_date | elapsed_time }}
                             </div>
+
                         </div>
                     </a>
                 </div>
