@@ -125,3 +125,19 @@ def list_info(prod_id):
     if product:
         return jsonify(product.to_dict())
     return jsonify({"erro": "Produto não encontrado"}), 404
+
+@main_routes.route("/api/search")
+def api_search():
+    termo = request.args.get("q", "")
+    
+    if not termo:
+        return jsonify([])
+
+    produtos = Product.query.filter(
+        or_(
+            Product.name.ilike(f"%{termo}%"),
+            Product.description.ilike(f"%{termo}%"),
+        )
+    ).limit(5).all()
+
+    return jsonify([produto.to_dict() for produto in produtos])

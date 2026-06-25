@@ -216,3 +216,68 @@ if (searchForm && searchInput && searchBtn) {
         }
     });
 }
+
+const searchDropdown = document.getElementById('search-dropdown');
+let searchTimeout;
+
+if (searchInput && searchDropdown) {
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const query = this.value.trim();
+
+        if (query.length === 0) {
+            searchDropdown.classList.remove('active');
+            return;
+        }
+
+        searchTimeout = setTimeout(() => {
+            fetch(`/api/search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchDropdown.innerHTML = '';
+
+                    if (data.length === 0) {
+                        searchDropdown.innerHTML = '<div class="search-dropdown-empty">Nenhum produto encontrado.</div>';
+                    } else {
+                        data.forEach(produto => {
+                            const imagemFallback = '/static/assets/image_not_found.png';
+                            let imagemSrc = imagemFallback;
+
+                            if (produto.images && produto.images.length > 0) {
+                                imagemSrc = `/static/uploads/${produto.images[0]}`;
+                            } else if (produto.image_paths) {
+                                imagemSrc = `/static/uploads/${produto.image_paths.split(',')[0]}`;
+                            } else if (produto.Image) {
+                                imagemSrc = produto.Image;
+                            }
+
+                            const precoFormatado = produto.cost 
+                                ? parseFloat(produto.cost).toFixed(2).replace('.', ',') 
+                                : '0,00';
+
+                            const item = document.createElement('a');
+                            item.href = `/product?id=${produto.id}`;
+                            item.className = 'search-dropdown-item';
+
+                            item.innerHTML = `
+                                <img src="${imagemSrc}" alt="${produto.name}" class="search-dropdown-img" onerror="this.onerror=null; this.src='${imagemFallback}';">
+                                <div class="search-dropdown-info">
+                                    <span class="search-dropdown-title">${produto.name}</span>
+                                    <span class="search-dropdown-price">R$ ${precoFormatado}</span>
+                                </div>
+                            `;
+                            searchDropdown.appendChild(item);
+                        });
+                    }
+                    searchDropdown.classList.add('active');
+                })
+                .catch(err => console.error("Erro na busca ao vivo:", err));
+        }, 300);
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!searchForm.contains(e.target) && !searchDropdown.contains(e.target)) {
+            searchDropdown.classList.remove('active');
+        }
+    });
+}
