@@ -201,3 +201,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+
+const searchInput = document.getElementById('search-input');
+
+if (searchInput) {
+    searchInput.addEventListener('keydown', function(event) {
+
+        if (event.key === 'Enter') {
+
+            const termo = this.value.trim();
+
+            if (termo !== '') {
+                window.location.href =
+                    `/search?q=${encodeURIComponent(termo)}`;
+            }
+        }
+    });
+}

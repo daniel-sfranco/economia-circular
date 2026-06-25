@@ -5,6 +5,8 @@ from .models.product import Product
 from .forms import ProductForm
 from .imageHandler import compress_and_save_image
 from .extensions import db
+from sqlalchemy import or_
+from datetime import datetime
 
 main_routes = Blueprint('main_routes', __name__)
 
@@ -71,6 +73,67 @@ def list_products():
     products = Product.query.all()
     products_dict = [product.to_dict() for product in products]
     return jsonify(products_dict)
+
+@main_routes.route("/search")
+def search_page():
+
+    termo = request.args.get("q", "")
+
+    produtos = Product.query.filter(
+        or_(
+            Product.name.ilike(f"%{termo}%"),
+            Product.description.ilike(f"%{termo}%"),
+        )
+    ).all()
+
+    return render_template(
+        "search_results.html",
+        produtos=produtos,
+        termo=termo
+    )
+
+@main_routes.app_template_filter('elapsed_time')
+def format_elapsed_time(post_date):
+    now = datetime.now()
+    elapsed_seconds = int((now - post_date).total_seconds())
+
+    if elapsed_seconds < 60:
+        return "agora mesmo"
+
+    intervals = [
+        ("ano", 31536000),
+        ("mês", 2592000),
+        ("dia", 86400),
+        ("hora", 3600),
+        ("minuto", 60)
+    ]
+
+    for nome, segundos in intervals:
+        quantidade = elapsed_seconds // segundos
+
+        if quantidade >= 1:
+            unidade = nome
+
+            if quantidade > 1:
+                unidade = "meses" if unidade == "mês" else unidade + "s"
+
+            return f"há {quantidade} {unidade}"
+
+#@main_routes.route('/api/products/search')
+#def search_products():
+#    query = request.args.get('q', '').strip()
+#
+ #   if query == '':
+  #      products = Product.query.all()
+   # else:
+    #    products = Product.query.filter(
+     #       or_(
+      #          Product.name.ilike(f'%{query}%'),
+       #         Product.description.ilike(f'%{query}%')
+        #    )
+        #).all()
+#
+#   return jsonify([product.to_dict() for product in products])
 
 @main_routes.route('/api/productInfo/<prod_id>')
 def list_info(prod_id):

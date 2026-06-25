@@ -1049,3 +1049,20 @@ footer {
 #search-input:focus {
     border-color: #ea7525;
 }
+
+.search-results-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px 2rem;
+}
+
+.item a {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}

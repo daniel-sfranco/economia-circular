@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="carousel-section">
+
+    <h2>
+        Resultados para "{{ termo }}"
+        ({{ produtos|length }} encontrados)
+    </h2>
+
+    {% if produtos %}
+        <div class="search-results-gallery">
+            {% for produto in produtos %}
+                <div class="item">
+                    <a href="/product?id={{ produto.id }}">
+                        <img
+                            src="/static/uploads/{{ produto.image_paths[0]}}"
+                            alt="{{ produto.name }}"
+                            onerror="this.onerror=null; this.src='/static/assets/image_not_found.png';"
+                        >
+
+                        <div class="item-info">
+                            <div class="item-title">
+                                {{ produto.name }}
+                            </div>
+
+                            <div class="item-time">
+                                {{ produto.post_date | elapsed_time }}
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+
+        <p style="text-align:center; font-size:1.2rem;">
+            Nenhum produto encontrado.
+        </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
