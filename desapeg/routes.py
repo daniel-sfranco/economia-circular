@@ -1,12 +1,15 @@
 import json
 import os
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, current_app
+
+from desapeg.models.category import Category
 from .models.product import Product
 from .forms import ProductForm
 from .imageHandler import compress_and_save_image
 from .extensions import db
 from sqlalchemy import or_
 from datetime import datetime
+from flask import jsonify
 
 main_routes = Blueprint('main_routes', __name__)
 
@@ -141,3 +144,9 @@ def api_search():
     ).limit(5).all()
 
     return jsonify([produto.to_dict() for produto in produtos])
+
+@main_routes.route('/api/categorias')
+def api_categorias():
+    categorias = Category.query.all()
+    nomes_categorias = [c.name for c in categorias] 
+    return jsonify(nomes_categorias)
