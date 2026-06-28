@@ -25,6 +25,21 @@
             {% endfor %}
         </div>
 
+        <div class="categories-field">
+            {{ form.categories.label(class="field-label") }}
+            <div class="tags-input-container" id="tags-container">
+                <input type="text" id="category-input" placeholder="Digite para buscar categorias..." autocomplete="off">
+            </div>
+            
+            {{ form.categories(id="hidden-categories", style="display: none;") }}
+            
+            <div class="autocomplete-dropdown" id="autocomplete-list"></div>
+            
+            {% for error in form.categories.errors %}
+                <div class="error-message">{{ error }}</div>
+            {% endfor %}
+        </div>
+
         <div class="price-quantity-group">
             <div class="price-field">
                 {{ form.price.label(class="field-label") }}

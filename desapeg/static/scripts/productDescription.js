@@ -2,6 +2,7 @@ function bootProductPage() {
     const params = (new URL(document.location)).searchParams;
     const produtId = params.get('id');
     loadInfo(produtId);
+    loadSimilarProducts(produtId);
 }
 
 if (document.readyState === 'loading') {
@@ -31,6 +32,17 @@ function loadInfo(id) {
         document.getElementById("cost").innerHTML = "R$ " + priceNum.toFixed(2).replace('.',',');
       }
       document.getElementById("quantity").innerHTML = "Quantidade: " + data.quantity;
+
+      const categoriesContainer = document.getElementById("product-categories");
+      if (categoriesContainer && data.categories) {
+          categoriesContainer.innerHTML = '';
+          data.categories.forEach(cat => {
+              const span = document.createElement('span');
+              span.className = 'category-tag';
+              span.textContent = cat;
+              categoriesContainer.appendChild(span);
+          });
+      }
 
       const contactBtn = document.getElementById("contactBtn");
       
@@ -91,6 +103,25 @@ function loadInfo(id) {
     });
 }
 
+function loadSimilarProducts(id) {
+    fetch(`/api/similarProducts/${id}`)
+        .then(res => res.json())
+        .then(produtos => {
+            const section = document.getElementById('similar-section');
+            const container = document.getElementById('similar-products-container');
+            
+            if (!produtos || produtos.length === 0) {
+                return; 
+            }
+            
+            section.style.display = 'block';
+            container.innerHTML = '';
+            produtos.forEach(prod => {
+                container.innerHTML += createCard(prod);
+            });
+        })
+        .catch(err => console.error("Erro ao carregar similares:", err));
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     const toggleBtn = document.getElementById("descToggle");

@@ -55,5 +55,9 @@ class ProductForm(FlaskForm):
         FileAllowed(['jpg', 'png', 'jpeg'], 'Apenas imagens (JPG, PNG, JPEG) são permitidas.'),
         max_files(5)
     ])
+
+    categories = StringField('Categorias', validators=[
+        DataRequired(message="É obrigatório inserir pelo menos 1 categoria.")
+    ])
     
     submit = SubmitField('Cadastrar Produto')

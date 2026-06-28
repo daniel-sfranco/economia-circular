@@ -39,6 +39,10 @@ def formspage():
         images = request.files.getlist(form.images.name)
         saved_image_names = []
         
+        categorias_str = form.categories.data
+        cat_names = [nome.strip() for nome in categorias_str.split(',') if nome.strip()]
+        categorias_db = Category.query.filter(Category.name.in_(cat_names)).all()
+        
         upload_path = os.path.join(current_app.root_path, 'static', 'uploads')
         os.makedirs(upload_path, exist_ok=True)
 
@@ -56,7 +60,8 @@ def formspage():
             cost=price,
             quantity=quantity,
             description=description,
-            image_paths=images_str
+            image_paths=images_str,
+            categories=categorias_db
         )
 
         try:
@@ -150,3 +155,21 @@ def api_categorias():
     categorias = Category.query.all()
     nomes_categorias = [c.name for c in categorias] 
     return jsonify(nomes_categorias)
+
+@main_routes.route('/api/similarProducts/<int:prod_id>')
+def api_similar_products(prod_id):
+    product = Product.query.get(prod_id)
+    
+    if not product or not product.categories:
+        return jsonify([])
+
+    category_ids = [c.id for c in product.categories]
+
+    similar_products = Product.query.join(Product.categories)\
+        .filter(Category.id.in_(category_ids))\
+        .filter(Product.id != prod_id)\
+        .distinct()\
+        .limit(10)\
+        .all()
+
+    return jsonify([p.to_dict() for p in similar_products])

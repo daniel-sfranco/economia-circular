@@ -1,6 +1,11 @@
 from desapeg.extensions import db
 from datetime import datetime, timezone
 
+product_category = db.Table('product_category',
+    db.Column('product_id', db.Integer, db.ForeignKey('product.id'), primary_key=True),
+    db.Column('category_id', db.Integer, db.ForeignKey('category.id'), primary_key=True)
+)
+
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
@@ -11,8 +16,7 @@ class Product(db.Model):
     description = db.Column(db.Text, nullable=True) 
     image_paths = db.Column(db.Text, nullable=True) 
     
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
-    category = db.relationship('Category', backref=db.backref('products', lazy=True))
+    categories = db.relationship('Category', secondary=product_category, lazy='subquery', backref=db.backref('products', lazy=True))
 
     def __repr__(self):
         return f'<Product {self.name}>'
@@ -27,5 +31,5 @@ class Product(db.Model):
             'quantity': self.quantity,
             'description': self.description,
             'images': self.image_paths.split(',') if self.image_paths else [],
-            'category': self.category.name if self.category else None
+            'categories': [c.name for c in self.categories] 
         }

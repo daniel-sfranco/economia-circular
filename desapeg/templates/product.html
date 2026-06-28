@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/product_card.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/product.css') }}?">
 {% endblock %}
 {% block content %}
@@ -24,6 +25,8 @@
 
             <p id="cost" class="product-price"></p>
             <p id="quantity" class="product-quantity"></p>
+            
+            <div id="product-categories" class="product-categories-tags"></div>
 
             <a id="contactBtn" class="contact-btn" href="#" target="_blank">EU QUERO</a>
 
@@ -33,15 +36,20 @@
 
             <div id="description" class="product-details"></div>
         </div>
-        </div>
     </div>
-    
+</div>
+
+<div class="similar-products-section" id="similar-section" style="display: none;">
+    <h2>Produtos Similares</h2>
+    <div id="similar-products-container" class="similar-products-gallery">
+        </div>
 </div>
 
 <div id="imageModal" class="modal">
     <img class="modal-content" id="fullImage">
 </div>
-<script src="{{ url_for('static', filename='scripts/productDescription.js') }}"></script>
+
 <script src="{{ url_for('static', filename='scripts/productCard.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/productDescription.js') }}"></script>
 
 {% endblock %}

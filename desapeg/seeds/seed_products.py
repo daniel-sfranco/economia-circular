@@ -7,13 +7,16 @@ from desapeg.models.category import Category
 fake = Faker('pt_BR')
 
 def seed_products(n):
-    categorias = Category.query.all()
+    categories = Category.query.all()
     
-    if not categorias:
+    if not categories:
         print("Erro: Nenhuma categoria no banco")
         return
 
     for _ in range(n):
+        n_categories = random.randint(1, min(3, len(categories)))
+        selected_categories = random.sample(categories, n_categories)
+
         product = Product(
             name = fake.word(),
             seller = fake.name(),
@@ -21,7 +24,7 @@ def seed_products(n):
             post_date = fake.date_time_this_year(),
             quantity = fake.random_int(min=1, max=10),
             description = fake.sentence(),
-            category = random.choice(categorias)
+            categories = selected_categories
         )
         db.session.add(product)
     
