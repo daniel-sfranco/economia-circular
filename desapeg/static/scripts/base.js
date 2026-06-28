@@ -141,3 +141,40 @@ if (searchInput && searchDropdown) {
         }
     });
 }
+
+const categoriasWrapper = document.getElementById('categorias-wrapper');
+const categoriasMenu = document.getElementById('categorias-menu');
+let categoriasCarregadas = false;
+
+if (categoriasWrapper && categoriasMenu) {
+    categoriasWrapper.addEventListener('mouseenter', function() {
+        
+        if (!categoriasCarregadas) {
+            fetch('/api/categorias')
+                .then(response => response.json())
+                .then(categorias => {
+                    categoriasMenu.innerHTML = '';
+                    
+                    if (categorias.length === 0) {
+                        categoriasMenu.innerHTML = '<span class="loading-text">Nenhuma categoria encontrada.</span>';
+                        return;
+                    }
+
+                    categorias.forEach(cat => {
+                        const link = document.createElement('a');
+                        
+                        link.href = `/search?categoria=${encodeURIComponent(cat)}`;
+                        link.textContent = cat;
+                        
+                        categoriasMenu.appendChild(link);
+                    });
+                    
+                    categoriasCarregadas = true;
+                })
+                .catch(err => {
+                    console.error("Erro ao carregar categorias:", err);
+                    categoriasMenu.innerHTML = '<span class="loading-text">Erro ao carregar categorias.</span>';
+                });
+        }
+    });
+}

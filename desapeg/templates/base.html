@@ -17,7 +17,12 @@
 
         <nav class="header-nav" aria-label="Navegação principal">
             <button class="header-btn">Recentes</button>
-            <button class="header-btn">Categorias</button>
+            <div class="dropdown-wrapper" id="categorias-wrapper">
+                <button class="header-btn" aria-haspopup="true" aria-expanded="false">Categorias</button>
+                <div class="mega-menu" id="categorias-menu">
+                    <span class="loading-text">Carregando...</span>
+                </div>
+            </div>
             <a href="{{ url_for('main_routes.aboutpage') }}" class="header-btn">Quem somos</a>
         </nav>
         <div class="header-actions">
