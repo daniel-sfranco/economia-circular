@@ -25,6 +25,14 @@
             {% endfor %}
         </div>
 
+        <div class="condition-field">
+            {{ form.condition.label(class="field-label") }}
+            {{ form.condition(class="input-text", placeholder="Ex: Novo, Usado (Bom estado), Seminovo...") }}
+            {% for error in form.condition.errors %}
+                <div class="error-message">{{ error }}</div>
+            {% endfor %}
+        </div>
+
         <div class="price-quantity-group">
             <div class="price-field">
                 {{ form.price.label(class="field-label") }}
@@ -41,6 +49,39 @@
                     <div class="error-message">{{ error }}</div>
                 {% endfor %}
             </div>
+        </div>
+
+        <div class="price-quantity-group">
+            <div class="price-field">
+                {{ form.usage_time.label(class="field-label") }}
+                {{ form.usage_time(class="input-text", placeholder="Ex: 6 meses, Nunca usado...") }}
+                {% for error in form.usage_time.errors %}
+                    <div class="error-message">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="quantity-field">
+                {{ form.pickup_location.label(class="field-label") }}
+                {{ form.pickup_location(class="input-text", placeholder="Ex: Prédio principal, Centro...") }}
+                {% for error in form.pickup_location.errors %}
+                    <div class="error-message">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="categories-field">
+            {{ form.categories.label(class="field-label") }}
+            <div class="tags-input-container" id="tags-container">
+                <input type="text" id="category-input" placeholder="Digite para buscar categorias..." autocomplete="off">
+            </div>
+            
+            {{ form.categories(id="hidden-categories", style="display: none;") }}
+            
+            <div class="autocomplete-dropdown" id="autocomplete-list"></div>
+            
+            {% for error in form.categories.errors %}
+                <div class="error-message">{{ error }}</div>
+            {% endfor %}
         </div>
 
         <div class="images-field">

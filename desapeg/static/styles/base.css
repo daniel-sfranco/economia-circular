@@ -42,6 +42,10 @@ p {
     text-align: justify;
 }
 
+a {
+    text-decoration: none;
+}
+
 /* Header */
 header {
     background-color: #fff9f3;
@@ -287,4 +291,210 @@ footer {
     padding: 1rem;
     width: 100%;
     position: relative;
+}
+
+/* Pesquisa de produtos */
+.search-form {
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    border: 2px solid transparent;
+    border-radius: 24px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 40px; 
+}
+
+.search-form.active {
+    background-color: #fcfcfc;
+    border-color: #449800;
+    box-shadow: 0 4px 10px rgba(68, 152, 0, 0.1);
+}
+
+.search-form.active:focus-within {
+    border-color: #ea7525;
+    box-shadow: 0 4px 12px rgba(234, 117, 37, 0.2);
+}
+
+.search-input {
+    width: 0;
+    opacity: 0;
+    border: none;
+    background: transparent;
+    padding: 0;
+    font-family: 'Body', Arial, sans-serif;
+    font-size: 1rem;
+    color: #333;
+    outline: none;
+    transition: width 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+}
+
+.search-form.active .search-input {
+    width: 180px;
+    opacity: 1;
+    padding: 0 0.2rem 0 1rem;
+}
+
+.search-form .action-btn.search {
+    margin: 0 6px; 
+}
+
+@media (max-width: 600px) {
+    .search-form.active .search-input {
+        width: 130px;
+    }
+}
+
+.search-container.open {
+    display: flex;
+}
+
+.search-results-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px 2rem;
+}
+
+.item a {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+
+.search-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 280px; 
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    max-height: 350px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.search-dropdown.active {
+    display: block;
+}
+
+.search-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+.search-dropdown::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+
+.search-dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    text-decoration: none;
+    color: inherit;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+}
+
+.search-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.search-dropdown-item:hover {
+    background-color: #fff9f3;
+}
+
+.search-dropdown-img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-right: 12px;
+    background-color: #fcfcfc;
+    flex-shrink: 0;
+}
+
+.search-dropdown-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.search-dropdown-title {
+    font-family: 'Title', Arial, sans-serif;
+    font-size: 1.05rem;
+    color: #333; 
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-dropdown-price {
+    font-family: 'Body', Arial, sans-serif;
+    font-size: 0.95rem;
+    color: #449800;
+    font-weight: bold;
+}
+
+.search-dropdown-empty {
+    padding: 16px;
+    text-align: center;
+    font-family: 'Body', Arial, sans-serif;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+    height: 100%;
+}
+
+.mega-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    padding: 1.5rem;
+    width: max-content;
+    min-width: 450px;
+    max-width: 80vw;
+    z-index: 1000;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 1rem 2.5rem;
+}
+
+.dropdown-wrapper:hover .mega-menu {
+    display: grid;
+}
+
+.mega-menu a {
+    color: #333;
+    font-family: 'Body', Arial, sans-serif;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+}
+
+.mega-menu a:hover {
+    color: #ea7525;
+}
+
+.loading-text {
+    font-family: 'Body', Arial, sans-serif;
+    color: #888;
+    grid-column: 1 / -1;
+    text-align: center;
 }

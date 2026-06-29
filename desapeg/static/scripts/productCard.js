@@ -34,8 +34,11 @@ function createCard(produto) {
     const id = produto.product_id || produto.id || 1;
     const dataPostagem = produto.post_date || produto.tempo;
     
-    
     const tempoFormatado = dataPostagem && dataPostagem.includes("T") ? formatElapsedTime(dataPostagem) : dataPostagem;
+
+    // lógica de formatação de preço
+    const preco = parseFloat(produto.cost);
+    const textoPreco = (preco === 0 || isNaN(preco)) ? "DOAÇÃO" : `R$ ${preco.toFixed(2).replace('.', ',')}`;
 
     let imagemSrc = imagemFallback;
 
@@ -55,6 +58,7 @@ function createCard(produto) {
                 >
                 <div class="item-info">
                     <div class="item-title">${nome}</div>
+                    <div class="item-price">${textoPreco}</div>
                     <div class="item-time">${tempoFormatado}</div>
                 </div>
             </a>

@@ -2,6 +2,7 @@ function bootProductPage() {
     const params = (new URL(document.location)).searchParams;
     const produtId = params.get('id');
     loadInfo(produtId);
+    loadSimilarProducts(produtId);
 }
 
 if (document.readyState === 'loading') {
@@ -20,7 +21,10 @@ function loadInfo(id) {
     })
     .then(data => {
       document.getElementById("prodName").innerHTML = data.name;
-      document.getElementById("seller").innerHTML = data.seller;
+      
+      // Correção: mudamos de data.seller para data.owner_name
+      document.getElementById("seller").innerHTML = data.owner_name; 
+      
       document.getElementById("description").innerHTML = data.description;
       document.getElementById("date").innerHTML = formatElapsedTime(data.post_date);
 
@@ -30,17 +34,29 @@ function loadInfo(id) {
       } else {
         document.getElementById("cost").innerHTML = "R$ " + priceNum.toFixed(2).replace('.',',');
       }
+      
       document.getElementById("quantity").innerHTML = "Quantidade: " + data.quantity;
+      
+      // Nova linha: Inserindo o local de retirada abaixo da quantidade
+      if (data.pickup_location) {
+          document.getElementById("pickup_location").innerHTML = "Local de retirada: " + data.pickup_location;
+      }
+
+      const categoriesContainer = document.getElementById("product-categories");
+      if (categoriesContainer && data.categories) {
+          categoriesContainer.innerHTML = '';
+          data.categories.forEach(cat => {
+              const span = document.createElement('span');
+              span.className = 'category-tag';
+              span.textContent = cat;
+              categoriesContainer.appendChild(span);
+          });
+      }
 
       const contactBtn = document.getElementById("contactBtn");
       
-      // Verifica se o contato existe e não está vazio
-      if (data.contact_info && data.contact_info.trim() !== "") {
-          contactBtn.href = "https://wa.me/55" + data.contact_info;
-          contactBtn.style.display = "inline-block"; 
-      } else {
-          contactBtn.style.display = "none"; // Esconde o botão se não houver link
-      }
+      let phone = data.owner_phone ? data.owner_phone.replace(/\D/g, '') : '';
+      contactBtn.href = "https://wa.me/55" + phone;
 
       const mainImageEl = document.getElementById("product-main-image"); 
       const thumbnailsContainer = document.getElementById("product-thumbnails");
@@ -62,7 +78,7 @@ function loadInfo(id) {
           
           if (thumbnailsContainer) {
               thumbnailsContainer.style.display = 'flex';
-              thumbnailsContainer.innerHTML = ''; // Limpa caso haja algo antes
+              thumbnailsContainer.innerHTML = '';
 
               imagesArray.forEach((imgUrl, index) => {
                   const thumb = document.createElement('img');
@@ -73,7 +89,6 @@ function loadInfo(id) {
                       thumb.classList.add('active');
                   }
 
-                  // Evento de clique para trocar a imagem principal
                   thumb.addEventListener('click', function() {
                       mainImageEl.src = imgUrl;
 
@@ -91,6 +106,25 @@ function loadInfo(id) {
     });
 }
 
+function loadSimilarProducts(id) {
+    fetch(`/api/similarProducts/${id}`)
+        .then(res => res.json())
+        .then(produtos => {
+            const section = document.getElementById('similar-section');
+            const container = document.getElementById('similar-products-container');
+            
+            if (!produtos || produtos.length === 0) {
+                return; 
+            }
+            
+            section.style.display = 'block';
+            container.innerHTML = '';
+            produtos.forEach(prod => {
+                container.innerHTML += createCard(prod);
+            });
+        })
+        .catch(err => console.error("Erro ao carregar similares:", err));
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     const toggleBtn = document.getElementById("descToggle");

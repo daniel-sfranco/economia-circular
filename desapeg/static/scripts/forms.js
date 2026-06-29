@@ -51,3 +51,83 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+const categoryInput = document.getElementById('category-input');
+const hiddenCategories = document.getElementById('hidden-categories');
+const tagsContainer = document.getElementById('tags-container');
+const dropdownList = document.getElementById('autocomplete-list');
+
+if (categoryInput) {
+    let availableCategories = [];
+    let selectedTags = [];
+
+    fetch('/api/categorias')
+        .then(res => res.json())
+        .then(data => { availableCategories = data; })
+        .catch(err => console.error("Erro ao carregar categorias:", err));
+
+    function updateHiddenInput() {
+        hiddenCategories.value = selectedTags.join(',');
+    }
+
+    function createTag(text) {
+        const tag = document.createElement('div');
+        tag.className = 'tag';
+        tag.innerHTML = `
+            ${text}
+            <span class="remove-tag" data-val="${text}">&times;</span>
+        `;
+            
+        tag.querySelector('.remove-tag').addEventListener('click', function() {
+            const val = this.getAttribute('data-val');
+            selectedTags = selectedTags.filter(t => t !== val);
+            tag.remove();
+            updateHiddenInput();
+        });
+        
+        tagsContainer.insertBefore(tag, categoryInput);
+    }
+
+    categoryInput.addEventListener('input', function() {
+        const val = this.value.toLowerCase();
+        dropdownList.innerHTML = '';
+        
+        if (!val) {
+            dropdownList.style.display = 'none';
+            return;
+        }
+        const filtered = availableCategories.filter(cat => 
+            cat.toLowerCase().includes(val) && !selectedTags.includes(cat)
+        );
+        
+        if (filtered.length > 0) {
+            filtered.forEach(cat => {
+                const item = document.createElement('div');
+                item.textContent = cat;
+                item.addEventListener('click', function() {
+                    selectedTags.push(cat);
+                    createTag(cat);
+                    categoryInput.value = ''; // limpa o input
+                    dropdownList.style.display = 'none';
+                    updateHiddenInput();
+                });
+                dropdownList.appendChild(item);
+            });
+            dropdownList.style.display = 'block';
+        } else {
+            dropdownList.style.display = 'none';
+        }
+    });
+
+    categoryInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (e.target !== categoryInput && e.target !== dropdownList) {
+            dropdownList.style.display = 'none';
+        }
+    });
+}
