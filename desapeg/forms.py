@@ -59,5 +59,20 @@ class ProductForm(FlaskForm):
     categories = StringField('Categorias', validators=[
         DataRequired(message="É obrigatório inserir pelo menos 1 categoria.")
     ])
-    
+
+    usage_time = StringField('Tempo de Uso', validators=[
+        DataRequired(message="O tempo de uso é obrigatório."),
+        max_text_len(100)
+    ])
+
+    pickup_location = StringField('Local de Retirada', validators=[
+        DataRequired(message="O local de retirada é obrigatório."),
+        max_text_len(255)
+    ])
+
+    condition = StringField('Estado do Produto', validators=[
+        DataRequired(message="O estado do produto é obrigatório."),
+        max_text_len(100)
+    ])
+
     submit = SubmitField('Cadastrar Produto')

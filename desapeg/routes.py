@@ -35,6 +35,9 @@ def formspage():
         description = form.description.data
         quantity = form.quantity.data
         price = form.price.data
+        condition=form.condition.data
+        usage_time=form.usage_time.data
+        pickup_location=form.pickup_location.data
         
         images = request.files.getlist(form.images.name)
         saved_image_names = []
@@ -56,12 +59,15 @@ def formspage():
         # Criação do objeto
         new_product = Product(
             name=prod_name,
-            seller="Usuário de Teste", # depois ligar o usuário de verdade ao produto adicionado
+            user_id=1, # depois ligar o usuário de verdade ao produto adicionado
             cost=price,
             quantity=quantity,
             description=description,
             image_paths=images_str,
-            categories=categorias_db
+            categories=categorias_db,
+            condition=condition,
+            usage_time=usage_time,
+            pickup_location=pickup_location
         )
 
         try:
