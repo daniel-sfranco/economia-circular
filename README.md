@@ -29,16 +29,16 @@ Para o desenvolvimento deste projeto, foi utilizado o estilo arquitetural MVC. O
 
 ### Diagrama C4
 #### Contexto:
-![Contexto](./imgReadMe/C4_Contexto.png)
+![Contexto](./imgMarkdown/C4_Contexto.png)
 
 #### Contêiner:
-![Contêiner](./imgReadMe/C4_Contêiner.png)
+![Contêiner](./imgMarkdown/C4_Contêiner.png)
 
 #### Componente (Frontend):
-![Frontend](./imgReadMe/C4_Front.png)
+![Frontend](./imgMarkdown/C4_Front.png)
 
 #### Componente (Backend):
-![Backend](./imgReadMe/C4_Back.png)
+![Backend](./imgMarkdown/C4_Back.png)
 
 ### Frontend
 O Frontend roda no navegador do usuário e é responsável pela apresentação visual, captura de interações e comunicação com o servidor. Ele é estruturado em torno de templates que funcionam como as views do sistema. Nele também há componentes em javascript, que têm objetivos como a busca de itens, exibição de imagens e o redirecionamento para o contato via WhatsApp. Também têm como objevos o gerenciamento dos critérios de pesquisa e controle de elementos como a barra de navegação e o rodapé. Há também o Gerenciador de Formulários, que lida com o comportamento de envio e interações na página de cadastro e atualização de informações de produtos.
