@@ -26,6 +26,20 @@ def aboutpage():
 def productpage():
     return render_template("product.html")
 
+@main_routes.route('/myproducts')
+def myproducts():
+    meus_produtos = Product.query.filter_by(user_id=1).all()
+    
+    return render_template(
+        "myproducts.html", 
+        produtos=meus_produtos,
+        termo="Meus Anúncios"
+    )
+
+@main_routes.route('/editproduct/<int:prod_id>')
+def edit_product_page(prod_id):
+    return render_template("editproduct.html")
+
 @main_routes.route('/forms', methods =['GET', 'POST'])
 def formspage():
     form = ProductForm()
