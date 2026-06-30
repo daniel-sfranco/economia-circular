@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    const categoriasSelecionadasElement =
+        document.getElementById('categorias-selecionadas');
+
+    const categoriasSelecionadas =
+        categoriasSelecionadasElement
+            ? JSON.parse(
+                categoriasSelecionadasElement.dataset.categorias
+              )
+            : [];
+
     const precoRange = document.getElementById('preco-max');
     const precoDisplay = document.getElementById('preco-display');
 
@@ -17,11 +28,21 @@ document.addEventListener('DOMContentLoaded', () => {
             data.forEach(categoria => {
                 const label = document.createElement('label');
                 label.className = 'checkbox-item';
-                
+
+                const checked = categoriasSelecionadas.includes(categoria)
+                    ? 'checked'
+                    : '';
+
                 label.innerHTML = `
-                    <input type="checkbox" name="categoria" value="${categoria}">
+                    <input
+                        type="checkbox"
+                        name="categoria"
+                        value="${categoria}"
+                        ${checked}
+                    >
                     ${categoria}
                 `;
+
                 container.appendChild(label);
             });
         })

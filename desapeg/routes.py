@@ -2,6 +2,7 @@ import json
 import os
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, current_app
 
+from desapeg.builders import ProductSearchBuilder
 from desapeg.models.category import Category
 from .models.product import Product
 from .forms import ProductForm
@@ -86,18 +87,34 @@ def list_products():
 def search_page():
 
     termo = request.args.get("q", "")
+    nome_produto = request.args.get("produto", "")
+    vendedor = request.args.get("vendedor", "")
 
-    produtos = Product.query.filter(
-        or_(
-            Product.name.ilike(f"%{termo}%"),
-            Product.description.ilike(f"%{termo}%"),
-        )
-    ).all()
+    preco_min = request.args.get("preco_min", 0, type=int)
+    preco_max = request.args.get("preco_max", 5000, type=int)
+
+    categorias = request.args.getlist("categoria")
+
+    produtos = (
+        ProductSearchBuilder()
+            .with_text(termo)
+            .with_product_name(nome_produto)
+            .with_seller(vendedor)
+            .with_price_range(preco_min, preco_max)
+            .with_categories(categorias)
+            .build()
+            .all()
+    )
 
     return render_template(
         "search_results.html",
         produtos=produtos,
-        termo=termo
+        termo=termo,
+        nome_produto=nome_produto,
+        vendedor=vendedor,
+        preco_min=preco_min,
+        preco_max=preco_max,
+        categorias_selecionadas=categorias
     )
 
 @main_routes.app_template_filter('elapsed_time')
