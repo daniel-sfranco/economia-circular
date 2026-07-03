@@ -54,10 +54,15 @@ function loadInfo(id) {
       }
 
       const contactBtn = document.getElementById("contactBtn");
-      
-      let phone = data.owner_phone ? data.owner_phone.replace(/\D/g, '') : '';
-      const mensagem = `Olá! Vi seu anúncio do produto ${data.name} no DesapegUnicamp e fiquei interessado.`;
-      contactBtn.href = `https://wa.me/55${phone}?text=${encodeURIComponent(mensagem)}`;
+
+      let phone = data.owner_phone
+        ? data.owner_phone.replace(/\D/g, '') : '';
+
+      const mensagem =
+        `Olá! Vi seu anúncio do produto ${data.name} no DesapegUnicamp e fiquei interessado.`;
+
+      contactBtn.href =
+        `https://wa.me/55${phone}?text=${encodeURIComponent(mensagem)}`;
 
       const mainImageEl = document.getElementById("product-main-image"); 
       const thumbnailsContainer = document.getElementById("product-thumbnails");
