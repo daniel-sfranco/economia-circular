@@ -38,7 +38,105 @@ def myproducts():
 
 @main_routes.route('/editproduct/<int:prod_id>')
 def edit_product_page(prod_id):
-    return render_template("editproduct.html")
+    produto = Product.query.get_or_404(prod_id)
+
+    return render_template(
+        "editproduct.html",
+        produto=produto
+    )
+
+@main_routes.route('/api/product/<int:prod_id>', methods=['PUT'])
+def update_product(prod_id):
+    produto = Product.query.get_or_404(prod_id)
+
+    produto.name = request.form.get('name')
+    produto.description = request.form.get('description')
+    produto.condition = request.form.get('condition')
+    produto.cost = float(request.form.get('cost'))
+    produto.quantity = int(request.form.get('quantity'))
+    produto.usage_time = request.form.get('usage_time')
+    produto.pickup_location = request.form.get('pickup_location')
+
+    categorias_str = request.form.get("categories", "")
+    nomes_categorias = [
+        nome.strip()
+        for nome in categorias_str.split(",")
+        if nome.strip()
+    ]
+
+    categorias_db = Category.query.filter(
+        Category.name.in_(nomes_categorias)
+    ).all()
+    produto.categories = categorias_db
+
+    novas_imagens = request.files.getlist("images")
+    print("Quantidade de imagens recebidas:", len(novas_imagens))
+
+    if novas_imagens and novas_imagens[0].filename != "":
+        upload_path = os.path.join(
+            current_app.root_path,
+            "static",
+            "uploads"
+        )
+
+        imagens_antigas = (
+            produto.image_paths.split(",")
+            if produto.image_paths
+            else []
+        )
+
+        for nome_imagem in imagens_antigas:
+            caminho = os.path.join(upload_path, nome_imagem)
+
+            if os.path.exists(caminho):
+                os.remove(caminho)
+
+        novos_nomes = []
+
+        for imagem in novas_imagens:
+            nome_salvo = compress_and_save_image(
+                imagem,
+                upload_path
+            )
+
+            novos_nomes.append(nome_salvo)
+
+        produto.image_paths = ",".join(novos_nomes)
+
+    db.session.commit()
+
+    return jsonify({
+        "success": True
+    })
+
+@main_routes.route('/api/product/<int:prod_id>', methods=['DELETE'])
+def delete_product(prod_id):
+    produto = Product.query.get_or_404(prod_id)
+
+    upload_path = os.path.join(
+    current_app.root_path,
+    'static',
+    'uploads'
+    )
+
+    imagens = (
+        produto.image_paths.split(',')
+        if produto.image_paths
+        else []
+    )
+
+    for imagem in imagens:
+        caminho = os.path.join(upload_path, imagem)
+
+        if os.path.exists(caminho):
+            os.remove(caminho)
+
+    db.session.delete(produto)
+    db.session.commit()
+
+    return jsonify({
+        "success": True
+    })
 
 @main_routes.route('/forms', methods =['GET', 'POST'])
 def formspage():
