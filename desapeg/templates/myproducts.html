@@ -34,7 +34,7 @@
                         </a>
                         <div class="actions-container">
                             <a href="/editproduct/{{ produto.id }}" class="btn-edit">Editar</a>
-                            <button class="btn-delete" onclick="confirmDelete(`{{ produto.id }}`)">Excluir</button>
+                            <button class="btn-delete" onclick="deleteProduct(`{{ produto.id }}`)">Excluir</button>
                         </div>
                     </div>
                 {% endfor %}
