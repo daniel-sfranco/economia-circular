@@ -13,12 +13,12 @@
 
             <div class="filter-group">
                 <label for="produto">Nome do produto</label>
-                <input type="text" id="produto" name="produto" placeholder="Refinar busca...">
+                <input type="text" id="produto" name="produto" placeholder="Refinar busca..." value="{{ nome_produto }}">
             </div>
 
             <div class="filter-group">
                 <label for="vendedor">Vendedor</label>
-                <input type="text" id="vendedor" name="vendedor" placeholder="Ex: João">
+                <input type="text" id="vendedor" name="vendedor" placeholder="Ex: João" value="{{ vendedor }}">
             </div>
 
             <div class="filter-group">
@@ -36,8 +36,8 @@
                 <div class="slider-container">
                     <div class="slider-track" id="slider-track"></div>
                     
-                    <input type="range" id="preco-min" name="preco_min" min="0" max="5000" step="10" value="0">
-                    <input type="range" id="preco-max" name="preco_max" min="0" max="5000" step="10" value="5000">
+                    <input type="range" id="preco-min" name="preco_min" min="0" max="5000" step="10" value="{{ preco_min }}">
+                    <input type="range" id="preco-max" name="preco_max" min="0" max="5000" step="10" value="{{ preco_max }}">
                 </div>
             </div>
 
@@ -87,6 +87,12 @@
             <p style="text-align:center; font-size:1.2rem;">Nenhum produto encontrado.</p>
         {% endif %}
     </div>
+</div>
+
+<div
+    id="categorias-selecionadas"
+    data-categorias='{{ categorias_selecionadas | default([], true) | tojson | safe }}'
+    style="display: none;">
 </div>
 
 <script src="{{ url_for('static', filename='scripts/searchFilter.js') }}"></script>
