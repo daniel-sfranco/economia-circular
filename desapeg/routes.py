@@ -207,7 +207,7 @@ def search_page():
     termo = request.args.get("q", "")
     nome_produto = request.args.get("produto", "")
     vendedor = request.args.get("vendedor", "")
-
+    pickup_location = request.args.get("local", "")
     preco_min = request.args.get("preco_min", 0, type=int)
     preco_max = request.args.get("preco_max", 5000, type=int)
 
@@ -218,6 +218,7 @@ def search_page():
             .with_text(termo)
             .with_product_name(nome_produto)
             .with_seller(vendedor)
+            .with_pickup_location(pickup_location)
             .with_price_range(preco_min, preco_max)
             .with_categories(categorias)
             .build()
@@ -230,6 +231,7 @@ def search_page():
         termo=termo,
         nome_produto=nome_produto,
         vendedor=vendedor,
+        pickup_location=pickup_location,
         preco_min=preco_min,
         preco_max=preco_max,
         categorias_selecionadas=categorias

@@ -32,7 +32,7 @@ def seed_products(n):
             quantity = fake.random_int(min=1, max=10),
             description = fake.text(max_nb_chars=150),
             condition = random.choice(condicoes),
-            pickup_location = fake.address(),
+            pickup_location = " ".join(fake.address().split()),
             usage_time = random.choice(tempos_uso),
             categories = selected_categories
         )

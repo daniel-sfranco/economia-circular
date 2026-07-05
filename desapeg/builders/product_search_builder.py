@@ -1,5 +1,6 @@
 from desapeg.models.product import Product
 from desapeg.models.category import Category
+from desapeg.models.user import User
 from sqlalchemy import or_
 
 class ProductSearchBuilder:
@@ -28,6 +29,13 @@ class ProductSearchBuilder:
         if vendedor:
             self.query = self.query.filter(
                 Product.seller.ilike(f"%{vendedor}%")
+            )
+        return self
+
+    def with_pickup_location(self, pickup_location):
+        if pickup_location:
+            self.query = self.query.filter(
+                Product.pickup_location.ilike(f"%{pickup_location}%")
             )
         return self
 
