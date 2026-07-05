@@ -217,7 +217,7 @@ def search_page():
         ProductSearchBuilder()
             .with_text(termo)
             .with_product_name(nome_produto)
-            .with_seller(vendedor)
+            .with_owner(vendedor)
             .with_pickup_location(pickup_location)
             .with_price_range(preco_min, preco_max)
             .with_categories(categorias)

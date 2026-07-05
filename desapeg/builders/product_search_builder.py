@@ -25,10 +25,12 @@ class ProductSearchBuilder:
             )
         return self
 
-    def with_seller(self, vendedor):
+    def with_owner(self, vendedor):
         if vendedor:
             self.query = self.query.filter(
-                Product.seller.ilike(f"%{vendedor}%")
+                Product.owner.has(
+                    User.name.ilike(f"%{vendedor}%")
+                )
             )
         return self
 
