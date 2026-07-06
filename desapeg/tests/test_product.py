@@ -3,6 +3,7 @@ import io
 from PIL import Image
 from desapeg.app import app
 from desapeg.extensions import db
+from desapeg.models.category import Category
 from desapeg.models.product import Product
 
 # Função auxiliar para criar uma imagem válida em memória
@@ -24,6 +25,10 @@ class ProductDBTestCase(unittest.TestCase):
 
         with app.app_context():
             db.create_all()
+            for name in ['Móveis', 'Eletrodomésticos']:
+                if not Category.query.filter_by(name=name).first():
+                    db.session.add(Category(name=name))
+            db.session.commit()
 
     def tearDown(self):
         with app.app_context():
@@ -36,9 +41,13 @@ class ProductDBTestCase(unittest.TestCase):
             data={
                 'prod_name': 'Produto Teste',
                 'description': 'Descrição muito legal',
-                'price': '100.50',
                 'quantity': '10',
-                'images': (create_test_image(), 'test.jpg')
+                'price': '100.50',
+                'condition': 'Novo',
+                'usage_time': 'Nunca usado',
+                'pickup_location': 'Campinas',
+                'images': (create_test_image(), 'test.jpg'),
+                'categories': 'Móveis, Eletrodomésticos'
             },
             content_type='multipart/form-data',
             follow_redirects=False
@@ -53,9 +62,13 @@ class ProductDBTestCase(unittest.TestCase):
 
             self.assertIsNotNone(product)
             self.assertEqual(product.name, 'Produto Teste')
-            self.assertEqual(product.cost, 100.50)
-            self.assertEqual(product.quantity, 10)
             self.assertEqual(product.description, 'Descrição muito legal')
+            self.assertEqual(product.quantity, 10)
+            self.assertEqual(product.cost, 100.50)
+            self.assertEqual(product.condition, 'Novo')
+            self.assertEqual(product.usage_time, 'Nunca usado')
+            self.assertEqual(product.pickup_location, 'Campinas')
+            self.assertEqual([category.name for category in product.categories], ['Móveis', 'Eletrodomésticos'])
 
 if __name__ == '__main__':
     unittest.main()
