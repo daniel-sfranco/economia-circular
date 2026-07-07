@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/product_card.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/myProducts.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="search-layout">
+    <div class="carousel-section">
+        <h2>Meus Anúncios ({{ produtos|length }})</h2>
+
+        {% if produtos %}
+            <div class="search-results-gallery">
+                {% for produto in produtos %}
+                    <div class="item">
+                        <a href="/product?id={{ produto.id }}">
+                            {% set primeira_imagem = produto.image_paths.split(',')[0] if produto.image_paths else '' %}
+                            <img 
+                                src="{{ url_for('static', filename='uploads/' + primeira_imagem) }}" 
+                                alt="{{ produto.name }}" 
+                                onerror="this.onerror=null; this.src='/static/assets/image_not_found.png';">
+
+                            <div class="item-info">
+                                <div class="item-title">{{ produto.name }}</div>
+                                <div class="item-price">
+                                    {% if produto.cost == 0 %}
+                                        DOAÇÃO
+                                    {% else %}
+                                        R$ {{ "%.2f"|format(produto.cost)|replace('.', ',') }}
+                                    {% endif %}
+                                </div>
+                                <div class="item-time">{{ produto.post_date | elapsed_time }}</div>
+                            </div>
+                        </a>
+                        <div class="actions-container">
+                            <a href="/editproduct/{{ produto.id }}" class="btn-edit">Editar</a>
+                            <button class="btn-delete" onclick="deleteProduct(`{{ produto.id }}`)">Excluir</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="text-align:center; font-size:1.2rem; padding: 40px;">Você ainda não publicou nenhum produto.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='scripts/searchFilter.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/myproducts.js') }}"></script>
+
+{% endblock %}

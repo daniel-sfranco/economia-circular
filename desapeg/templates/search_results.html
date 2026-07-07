@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/product_card.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/searchFilter.css') }}"> {% endblock %}
+
+{% block content %}
+<div class="search-layout">
+    <aside class="search-filters">
+        <h3>Filtros</h3>
+        <form id="filter-form" method="GET" action="{{ url_for('main_routes.search_page') }}">
+            
+            <input type="hidden" name="q" value="{{ termo }}">
+
+            <div class="filter-group">
+                <label for="produto">Nome do produto</label>
+                <input type="text" id="produto" name="produto" placeholder="Refinar busca..." value="{{ nome_produto }}">
+            </div>
+
+            <div class="filter-group">
+                <label for="vendedor">Vendedor</label>
+                <input type="text" id="vendedor" name="vendedor" placeholder="Ex: João" value="{{ vendedor }}">
+            </div>
+
+            <div class="filter-group">
+                <label for="local">Local próximo</label>
+                <input type="text" id="local" name="local" placeholder="Bairro ou Cidade" value="{{ pickup_location }}">
+            </div>
+
+            <div class="filter-group">
+                <label>Preço</label>
+                        
+                <div class="price-display">
+                    <span id="preco-min-display">R$ 0</span> – <span id="preco-max-display">R$ 5.000 e mais</span>
+                </div>
+            
+                <div class="slider-container">
+                    <div class="slider-track" id="slider-track"></div>
+                    
+                    <input type="range" id="preco-min" name="preco_min" min="0" max="5000" step="10" value="{{ preco_min }}">
+                    <input type="range" id="preco-max" name="preco_max" min="0" max="5000" step="10" value="{{ preco_max }}">
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label>Categorias</label>
+                <div id="categorias-container">
+                    </div>
+            </div>
+
+            <button type="submit" class="apply-filters-btn">Aplicar Filtros</button>
+        </form>
+    </aside>
+
+    <div class="carousel-section">
+        <h2>
+            Resultados para "{{ termo }}"
+            ({{ produtos|length }} encontrados)
+        </h2>
+
+        {% if produtos %}
+            <div class="search-results-gallery">
+                {% for produto in produtos %}
+                    <div class="item">
+                        <a href="/product?id={{ produto.id }}">
+                            {% set primeira_imagem = produto.image_paths.split(',')[0] if produto.image_paths else '' %}
+                            <img 
+                                src="{{ url_for('static', filename='uploads/' + primeira_imagem) }}" 
+                                alt="{{ produto.name }}" 
+                                onerror="this.onerror=null; this.src='/static/assets/image_not_found.png';">
+
+                            <div class="item-info">
+                                <div class="item-title">{{ produto.name }}</div>
+                                <div class="item-price">
+                                    {% if produto.cost == 0 %}
+                                        DOAÇÃO
+                                    {% else %}
+                                        R$ {{ "%.2f"|format(produto.cost)|replace('.', ',') }}
+                                    {% endif %}
+                                </div>
+                                <div class="item-time">{{ produto.post_date | elapsed_time }}</div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="text-align:center; font-size:1.2rem;">Nenhum produto encontrado.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div
+    id="categorias-selecionadas"
+    data-categorias='{{ categorias_selecionadas | default([], true) | tojson | safe }}'
+    style="display: none;">
+</div>
+
+<script src="{{ url_for('static', filename='scripts/searchFilter.js') }}"></script>
+
+{% endblock %}

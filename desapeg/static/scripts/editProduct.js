@@ -1,56 +1,49 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('.product-form');
-    if (form) {
-        form.reset();
+const productId = document
+    .querySelector(".product-registration-container")
+    .dataset.productId;
+
+async function saveProduct() {
+
+    const name = document.getElementById("product-name").value;
+    const description = document.getElementById("product-description").value;
+    const condition = document.getElementById("product-condition").value;
+    const cost = document.getElementById("product-cost").value;
+    const quantity = document.getElementById("product-quantity").value;
+    const usageTime = document.getElementById("product-usage-time").value;
+    const pickupLocation = document.getElementById("product-pickup-location").value;
+    const categories = document.getElementById("hidden-categories").value;
+    const imageFiles = document.getElementById("image-upload").files;
+
+    const formData = new FormData();
+
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("condition", condition);
+    formData.append("cost", cost);
+    formData.append("quantity", quantity);
+    formData.append("usage_time", usageTime);
+    formData.append("pickup_location", pickupLocation);
+    formData.append("categories", categories);
+    for (const image of imageFiles) {
+        formData.append("images", image);
     }
 
-    const fileInput = document.getElementById('image-upload');
-    const previewContainer = document.getElementById('image-preview-container');
-    const modal = document.getElementById('image-modal');
-    const modalImg = document.getElementById('modal-image');
+    const response = await fetch(
+        `/api/product/${productId}`,
+        {
+            method: "PUT",
+            body: formData
+        }
+    );
 
-    if (fileInput) {
-        fileInput.addEventListener('change', function() {
-            previewContainer.innerHTML = '';
-            
-            // Transforma os arquivos selecionados em uma lista
-            const files = Array.from(this.files);
-            const filesToProcess = files.slice(0, 5);
+    const data = await response.json();
 
-            filesToProcess.forEach(file => {
-                // Confirma se é realmente uma imagem
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        // Cria a tag <img> dinamicamente
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.classList.add('preview-thumbnail');
-                        
-                        img.addEventListener('click', function() {
-                            modalImg.src = this.src;
-                            modal.style.display = 'flex'; 
-                        });
-                        
-                        previewContainer.appendChild(img);
-                    }
-                    
-                    // Lê o arquivo do computador do usuário
-                    reader.readAsDataURL(file);
-                }
-            });
-        });
+    //console.log(data);
+    if (response.ok) {
+        alert("Produto atualizado com sucesso!");
+        window.location.href = "/myproducts";
     }
-
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-    }
-});
+}
 
 const categoryInput = document.getElementById('category-input');
 const hiddenCategories = document.getElementById('hidden-categories');
@@ -59,7 +52,9 @@ const dropdownList = document.getElementById('autocomplete-list');
 
 if (categoryInput) {
     let availableCategories = [];
-    let selectedTags = [];
+    let selectedTags = hiddenCategories.value
+    ? hiddenCategories.value.split(',').map(t => t.trim())
+    : [];
 
     fetch('/api/categorias')
         .then(res => res.json())
@@ -87,6 +82,8 @@ if (categoryInput) {
         
         tagsContainer.insertBefore(tag, categoryInput);
     }
+
+    selectedTags.forEach(tag => createTag(tag));
 
     categoryInput.addEventListener('input', function() {
         const val = this.value.toLowerCase();
@@ -130,4 +127,28 @@ if (categoryInput) {
             dropdownList.style.display = 'none';
         }
     });
+}
+
+async function deleteProduct(productId) {
+    const confirmacao = confirm(
+        "Você tem certeza absoluta? Essa operação vai deletar o produto e não poderá ser revertida."
+    );
+
+    if (!confirmacao) {
+        return;
+    }
+
+    const response = await fetch(
+        `/api/product/${productId}`,
+        {
+            method: "DELETE"
+        }
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+        alert("Produto excluído com sucesso!");
+        window.location.href = "/myproducts";
+    }
 }

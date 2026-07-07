@@ -13,10 +13,6 @@
     border: 1px solid #f0f0f0;
 }
 
-a {
-    text-decoration: none;
-}
-
 .item:hover {
     transform: scale(1.04) translateY(-4px); 
     box-shadow: 0 12px 24px rgba(68, 152, 0, 0.3); 
@@ -58,4 +54,12 @@ a {
     font-size: 0.85rem;
     color: #ea7525; 
     font-weight: 500;
+}
+
+.item-price {
+    font-family: 'Body', Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #449800; /* Mesma cor do .item-title */
+    margin-bottom: 4px;
 }
