@@ -85,7 +85,7 @@ class ProductDBTestCase(unittest.TestCase):
             self.assertEqual(product.condition, 'Novo')
             self.assertEqual(product.usage_time, 'Nunca usado')
             self.assertEqual(product.pickup_location, 'Campinas')
-            self.assertEqual([category.name for category in product.categories], ['Móveis', 'Eletrodomésticos'])
+            self.assertEqual([category.name for category in product.category].sort(), ['Eletrodomésticos', 'Móveis'])
 
     def test_update_product(self):
         response = self.client.put(
