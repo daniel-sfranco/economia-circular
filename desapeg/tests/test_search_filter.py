@@ -119,6 +119,7 @@ class SearchFilterTestCase(unittest.TestCase):
             )
             self.assertEqual(produtos[0].name, "Produto 2")
 
+    # Testes pairwise com particionamento para filtros
     def test_pairwise_combinations(self):
         pairwise_cases = [
             ("Móveis", "Baixo", "Vazio"),

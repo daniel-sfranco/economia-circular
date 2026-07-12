@@ -5,7 +5,7 @@ name: Python application
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "test/testes-com-criterios" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
