@@ -15,19 +15,13 @@ def create_test_image():
 
 class SearchFilterTestCase(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
+    def setUp(self):
         app.config['TESTING'] = True
         app.config['WTF_CSRF_ENABLED'] = False
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-        
-        if 'sqlalchemy' in app.extensions:
-            del app.extensions['sqlalchemy']
-        db.init_app(app)
 
-    def setUp(self):
         self.client = app.test_client()
-        
+
         self.app_context = app.app_context()
         self.app_context.push()
 
