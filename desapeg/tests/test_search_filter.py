@@ -5,13 +5,7 @@ from desapeg.app import app
 from desapeg.extensions import db
 from desapeg.builders.product_search_builder import ProductSearchBuilder
 from desapeg.models.category import Category
-
-def create_test_image():
-    img = Image.new('RGB', (10, 10), color='red')
-    img_bytes = io.BytesIO()
-    img.save(img_bytes, format='JPEG')
-    img_bytes.seek(0)
-    return img_bytes
+from desapeg.tests.test_utils import create_test_image
 
 class SearchFilterTestCase(unittest.TestCase):
 

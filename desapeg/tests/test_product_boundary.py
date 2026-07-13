@@ -5,14 +5,7 @@ from desapeg.app import app
 from desapeg.extensions import db
 from desapeg.models.category import Category
 from desapeg.models.product import Product
-
-# Função auxiliar para criar uma imagem válida em memória
-def create_test_image():
-    img = Image.new('RGB', (10, 10), color='red')
-    img_bytes = io.BytesIO()
-    img.save(img_bytes, format='JPEG')
-    img_bytes.seek(0)
-    return img_bytes
+from desapeg.tests.test_utils import create_test_image
 
 class ProductBoundaryTestCase(unittest.TestCase):
 
