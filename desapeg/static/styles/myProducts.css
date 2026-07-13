@@ -1,3 +1,26 @@
+.myproducts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    max-width: 800px;
+    margin: 0 auto 25px auto;
+}
+
+.btn-dashboard {
+    text-decoration: none;
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.btn-dashboard:hover {
+    background-color: #256628;
+}
+
 .actions-container {
     display: flex;
     gap: 10px;

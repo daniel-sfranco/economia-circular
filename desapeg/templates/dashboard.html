@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='styles/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <h1 class="page-title">Dashboard do vendedor</h1>
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <h3>Produtos anunciados</h3>
+            <span id="total-products" class="stat-number">18</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Produtos vendidos</h3>
+            <span id="sold-products" class="stat-number">9</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Avaliação média</h3>
+            <span id="average-rating" class="stat-number">4.8</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Visualizações</h3>
+            <span id="total-views" class="stat-number">352</span>
+        </div>
+
+    </section>
+
+    <section class="dashboard-section">
+
+        <h2>Categorias com mais anúncios</h2>
+
+        <div class="category-list">
+
+            <div class="category-item">
+                <span>Livros</span>
+                <span>12</span>
+            </div>
+
+            <div class="category-item">
+                <span>Eletrônicos</span>
+                <span>5</span>
+            </div>
+
+            <div class="category-item">
+                <span>Móveis</span>
+                <span>1</span>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="dashboard-section">
+
+        <h2>Últimos anúncios</h2>
+
+        <div class="recent-products">
+
+            <div class="recent-product">
+                Livro de Física
+            </div>
+
+            <div class="recent-product">
+                Notebook Dell
+            </div>
+
+            <div class="recent-product">
+                Calculadora HP
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+{% endblock %}

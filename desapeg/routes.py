@@ -310,3 +310,7 @@ def api_similar_products(prod_id):
         .all()
 
     return jsonify([p.to_dict() for p in similar_products])
+
+@main_routes.route('/dashboard')
+def dashboard():
+    return render_template("dashboard.html")
