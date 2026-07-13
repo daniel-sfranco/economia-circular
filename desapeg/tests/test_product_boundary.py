@@ -152,7 +152,7 @@ class ProductBoundaryTestCase(unittest.TestCase):
             0: 200, # obrigatório pelo menos 1 imagem
             1: 302, # mínimo de 1 imagem
             5: 302, # limite máximo de 5 imagens
-            6: 200  # ultrapassa o limite de 5 imagens
+            6: 200 # ultrapassa o limite de 5 imagens
         }
 
         for num_images, expected_status in boundaries.items():
