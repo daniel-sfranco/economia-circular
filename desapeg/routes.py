@@ -50,15 +50,23 @@ def edit_product_page(prod_id):
 def update_product(prod_id):
     produto = Product.query.get_or_404(prod_id)
 
-    produto.name = request.form.get('name')
-    produto.description = request.form.get('description')
-    produto.condition = request.form.get('condition')
-    produto.cost = float(request.form.get('cost'))
-    produto.quantity = int(request.form.get('quantity'))
-    produto.usage_time = request.form.get('usage_time')
-    produto.pickup_location = request.form.get('pickup_location')
+    form = ProductForm(meta={'csrf': False})
 
-    categorias_str = request.form.get("categories", "")
+    # Remove o DataRequired do campo de imagens APENAS para a edição
+    form.images.validators = [v for v in form.images.validators if type(v).__name__ != 'DataRequired']
+
+    if not form.validate():
+        return jsonify({"errors": form.errors}), 400
+
+    produto.name = form.name.data
+    produto.description = form.description.data
+    produto.condition = form.condition.data
+    produto.cost = float(form.cost.data)
+    produto.quantity = int(form.quantity.data)
+    produto.usage_time = form.usage_time.data
+    produto.pickup_location = form.pickup_location.data
+
+    categorias_str = form.categories.data
     nomes_categorias = [
         nome.strip()
         for nome in categorias_str.split(",")
@@ -70,9 +78,9 @@ def update_product(prod_id):
     ).all()
     produto.categories = categorias_db
 
-    novas_imagens = request.files.getlist("images")
-    print("Quantidade de imagens recebidas:", len(novas_imagens))
+    novas_imagens = request.files.getlist(form.images.name)
 
+    # Só altera as imagens no banco e no disco SE o usuário enviou novos arquivos
     if novas_imagens and novas_imagens[0].filename != "":
         upload_path = os.path.join(
             current_app.root_path,
@@ -88,7 +96,6 @@ def update_product(prod_id):
 
         for nome_imagem in imagens_antigas:
             caminho = os.path.join(upload_path, nome_imagem)
-
             if os.path.exists(caminho):
                 os.remove(caminho)
 
@@ -99,7 +106,6 @@ def update_product(prod_id):
                 imagem,
                 upload_path
             )
-
             novos_nomes.append(nome_salvo)
 
         produto.image_paths = ",".join(novos_nomes)
@@ -144,10 +150,10 @@ def formspage():
     form = ProductForm()
 
     if form.validate_on_submit():
-        prod_name = form.prod_name.data
+        prod_name = form.name.data
         description = form.description.data
         quantity = form.quantity.data
-        price = form.price.data
+        price = form.cost.data
         condition=form.condition.data
         usage_time=form.usage_time.data
         pickup_location=form.pickup_location.data
