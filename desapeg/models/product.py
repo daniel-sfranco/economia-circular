@@ -19,6 +19,9 @@ class Product(db.Model):
     pickup_location = db.Column(db.String(255), nullable=False)
     usage_time = db.Column(db.String(100), nullable=False)
     
+    sold = db.Column( db.Boolean, nullable=False, default=False )
+    buyer_id = db.Column( db.Integer, db.ForeignKey("user.id"), nullable=True )
+
     categories = db.relationship('Category', secondary=product_category, lazy='subquery', backref=db.backref('products', lazy=True))
 
     def __repr__(self):
