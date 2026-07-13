@@ -38,10 +38,10 @@ class ProductBoundaryTestCase(unittest.TestCase):
     def get_base_payload(self):
         # Retorna um dicionário com dados válidos para facilitar os testes.
         return {
-            'prod_name': 'Produto Teste',
+            'name': 'Produto Teste',
             'description': 'Descrição super incrível do produto',
             'quantity': '10',
-            'price': '50.50',
+            'cost': '50.50',
             'condition': 'Novo',
             'usage_time': 'Nunca usado',
             'pickup_location': 'Barão Geraldo, Campinas',
@@ -60,7 +60,7 @@ class ProductBoundaryTestCase(unittest.TestCase):
 
         for name, expected_status in boundaries.items():
             payload = self.get_base_payload()
-            payload['prod_name'] = name
+            payload['name'] = name
             
             response = self.client.post(
                 '/forms',
@@ -94,7 +94,7 @@ class ProductBoundaryTestCase(unittest.TestCase):
     def test_boundary_price_decimal_places(self):
         # Testa o limite de casas decimais (máximo 2)
         payload = self.get_base_payload()
-        payload['price'] = '10.123' # 3 casas decimais
+        payload['cost'] = '10.123' # 3 casas decimais
         
         response = self.client.post(
             '/forms',
@@ -135,9 +135,9 @@ class ProductBoundaryTestCase(unittest.TestCase):
             '10000.01': 200, # acima do máximo
         }
 
-        for price, expected_status in boundaries.items():
+        for cost, expected_status in boundaries.items():
             payload = self.get_base_payload()
-            payload['price'] = price
+            payload['cost'] = cost
             
             response = self.client.post(
                 '/forms',
@@ -145,7 +145,7 @@ class ProductBoundaryTestCase(unittest.TestCase):
                 content_type='multipart/form-data',
                 follow_redirects=False
             )
-            self.assertEqual(response.status_code, expected_status, f"Falha no preço limite: {price}")
+            self.assertEqual(response.status_code, expected_status, f"Falha no preço limite: {cost}")
 
     def test_boundary_images(self):
         # Testa os limites de envio de imagens

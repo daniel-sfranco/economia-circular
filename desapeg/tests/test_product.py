@@ -33,10 +33,10 @@ class ProductDBTestCase(unittest.TestCase):
             response = self.client.post(
             '/forms',
             data={
-                'prod_name': 'Produto Teste',
+                'name': 'Produto Teste',
                 'description': 'Descrição muito legal',
                 'quantity': '10',
-                'price': '50.50',
+                'cost': '50.50',
                 'condition': 'Novo',
                 'usage_time': 'Nunca usado',
                 'pickup_location': 'Campinas',
@@ -56,10 +56,10 @@ class ProductDBTestCase(unittest.TestCase):
         response = self.client.post(
             '/forms',
             data={
-                'prod_name': 'Produto 2',
+                'name': 'Produto 2',
                 'description': 'Descrição muito legal',
                 'quantity': '10',
-                'price': '100.50',
+                'cost': '100.50',
                 'condition': 'Novo',
                 'usage_time': 'Nunca usado',
                 'pickup_location': 'Campinas',

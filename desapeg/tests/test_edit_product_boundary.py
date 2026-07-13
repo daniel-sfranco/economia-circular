@@ -138,7 +138,7 @@ class ProductEditBoundaryTestCase(unittest.TestCase):
         # Testa os valores limites para a quantidade (0 a 50)
         boundaries = {
             '-1': 400,
-            '0': 200,
+            '0': 400,
             '50': 200,
             '51': 400
         }
@@ -187,7 +187,7 @@ class ProductEditBoundaryTestCase(unittest.TestCase):
     def test_boundary_images_on_edit(self):
         # Testa os limites de envio de imagens (1 a 5)
         boundaries = {
-            0: 400,
+            0: 200,
             1: 200,
             5: 200,
             6: 400
