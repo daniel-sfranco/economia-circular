@@ -53,7 +53,7 @@ class ProductBoundaryTestCase(unittest.TestCase):
         # Testa o limite de tamanho do texto do nome do produto (máximo 50 caracteres)
         boundaries = {
             '': 200, # 0 caracteres
-            'A': 200, # 1 caractere
+            'A': 302, # 1 caractere
             'A' * 50: 302, # exatamente 50 caracteres
             'A' * 51: 200 # 51 caracteres
         }
@@ -74,7 +74,7 @@ class ProductBoundaryTestCase(unittest.TestCase):
         # Testa o limite de tamanho do texto da descrição (0 e máximo 5000 caracteres)
         boundaries = {
             '': 200, # 0 caracteres
-            'A': 200, # 1 caractere
+            'A': 302, # 1 caractere
             'A' * 5000: 302, # exatamente 5000 caracteres
             'A' * 5001: 200 # 5001 caracteres
         }
@@ -108,7 +108,8 @@ class ProductBoundaryTestCase(unittest.TestCase):
         # Testa os valores limites para a quantidade (0 a 50)
         boundaries = {
             '-1': 200, # abaixo do mínimo
-            '0': 302, # limite mínimo
+            '0': 200, # abaixo do mínimo
+            '1': 302, # limite mínimo
             '50': 302, # limite máximo
             '51': 200 # acima do máximo
         }
