@@ -349,14 +349,13 @@ def register_product_interest(product_id):
 
     return "", 204
 
-@main_routes.route('/dashboard')
-def dashboard():
+@main_routes.route('/dashboard/<int:seller_id>')
+def dashboard(seller_id):
 
-    seller_id =1 
-    total_products = Product.query.filter_by(user_id=1).count()
+    total_products = Product.query.filter_by(user_id=seller_id).count()
     recent_products = (
         Product.query
-        .filter_by(user_id=1)
+        .filter_by(user_id=seller_id)
         .order_by(Product.post_date.desc())
         .limit(5)
         .all()
@@ -365,7 +364,7 @@ def dashboard():
     total_contacts = (
         ProductInterest.query
         .join(Product)
-        .filter(Product.user_id == 1)
+        .filter(Product.user_id == seller_id)
         .count()
     )
 
@@ -375,7 +374,7 @@ def dashboard():
             db.func.count(Product.id).label("total")
         )
         .join(Category.products)
-        .filter(Product.user_id == 1)
+        .filter(Product.user_id == seller_id)
         .group_by(Category.id) # ..., Category.name
         .order_by(db.func.count(Product.id).desc())
         .limit(5)

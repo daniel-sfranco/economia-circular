@@ -24,6 +24,8 @@ function loadInfo(id) {
       
       // Correção: mudamos de data.seller para data.owner_name
       document.getElementById("seller").innerHTML = data.owner_name; 
+
+      document.getElementById('sellerBtn').href = `/dashboard/${data.user_id}`;
       
       document.getElementById("description").innerHTML = data.description;
       document.getElementById("date").innerHTML = formatElapsedTime(data.post_date);
