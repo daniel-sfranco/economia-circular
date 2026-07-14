@@ -5,6 +5,7 @@ from wtforms.validators import DataRequired, InputRequired, NumberRange, Validat
 #validação customizada para máximo de arquivos, máximo de casas decimais do preço e comprimento máximo dos textos.
 def max_files(max_uploads):
     def _max_files(form, field):
+        files = []
         if (field.data != None):
             files = [f for f in field.data if f and f.filename]
         if len(files) > max_uploads:
@@ -27,7 +28,7 @@ def max_text_len(max_len):
         
 
 class ProductForm(FlaskForm):
-    prod_name = StringField('Nome do Produto', validators=[
+    name = StringField('Nome do Produto', validators=[
         DataRequired(message="O nome do produto é obrigatório."),
         max_text_len(50)
     ])
@@ -37,7 +38,7 @@ class ProductForm(FlaskForm):
         max_text_len(5000)
     ])
     
-    price = DecimalField('Preço do Produto (R$)', places = 2, validators=[
+    cost = DecimalField('Preço do Produto (R$)', places = 2, validators=[
         InputRequired(message="O preço é obrigatório. Se seu produto é uma DOAÇÃO, coloque o preço como 0"),
         NumberRange(min=0.0, message="O preço não pode ser negativo."),
         NumberRange(max=10000.0, message="O preço não pode ser mais de 10 mil reais."),
