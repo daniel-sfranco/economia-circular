@@ -5,6 +5,8 @@ class User(db.Model):
     name = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    rating_avg = db.Column(db.Float, default=0)
+    rating_count = db.Column(db.Integer, default=0)
     
     # O 'backref' cria a propriedade 'owner' no objeto Product.
     products = db.relationship('Product', foreign_keys="Product.user_id", backref='owner', lazy=True)
