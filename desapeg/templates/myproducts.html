@@ -7,7 +7,14 @@
 {% block content %}
 <div class="search-layout">
     <div class="carousel-section">
-        <h2>Meus Anúncios ({{ produtos|length }})</h2>
+
+        <div class="myproducts-header">
+            <h2>Meus Anúncios ({{ produtos|length }})</h2>
+
+            <a href="/dashboard" class="btn-dashboard">
+                Dashboard
+            </a>
+        </div>
 
         {% if produtos %}
             <div class="search-results-gallery">
