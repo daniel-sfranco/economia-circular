@@ -392,16 +392,14 @@ def dashboard():
         if average_rating is not None
         else "-"
     )'''
-    
+
     average_rating = '-'
-    total_views = "-"
 
     return render_template(
         "dashboard.html",
         total_products=total_products,
         total_contacts=total_contacts,
         average_rating=average_rating,
-        total_views=total_views,
         recent_products=recent_products,
         top_categories=top_categories,
     )
