@@ -27,6 +27,10 @@ def aboutpage():
 def productpage():
     return render_template("product.html")
 
+@main_routes.route('/evaluate')
+def evaluatepage():
+    return render_template("evaluate.html")
+
 @main_routes.route('/myproducts')
 def myproducts():
     meus_produtos = Product.query.filter_by(user_id=1).all()
