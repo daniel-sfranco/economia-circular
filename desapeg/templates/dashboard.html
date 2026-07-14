@@ -15,22 +15,22 @@
 
         <div class="stat-card">
             <h3>Produtos anunciados</h3>
-            <span id="total-products" class="stat-number">18</span>
+            <span id="total-products" class="stat-number"> {{ total_products }} </span>
         </div>
 
         <div class="stat-card">
             <h3>Contatos de clientes</h3>
-            <span id="client-contacts" class="stat-number">9</span>
+            <span id="client-contacts" class="stat-number"> {{ total_contacts }} </span>
         </div>
 
         <div class="stat-card">
             <h3>Avaliação média</h3>
-            <span id="average-rating" class="stat-number">4.8</span>
+            <span id="average-rating" class="stat-number"> {{ average_rating }} </span>
         </div>
 
         <div class="stat-card">
             <h3>Visualizações</h3>
-            <span id="total-views" class="stat-number">352</span>
+            <span id="total-views" class="stat-number"> {{ total_views }} </span>
         </div>
 
     </section>
@@ -41,20 +41,13 @@
 
         <div class="category-list">
 
-            <div class="category-item">
-                <span>Livros</span>
-                <span>12</span>
-            </div>
+            {% for nome, total in top_categories %}
 
             <div class="category-item">
-                <span>Eletrônicos</span>
-                <span>5</span>
+                <span>{{ nome }}</span>
+                <span>{{ total }}</span>
             </div>
-
-            <div class="category-item">
-                <span>Móveis</span>
-                <span>1</span>
-            </div>
+            {% endfor %}
 
         </div>
 
@@ -66,17 +59,12 @@
 
         <div class="recent-products">
 
-            <div class="recent-product">
-                Livro de Física
-            </div>
+            {% for produto in recent_products %}
 
             <div class="recent-product">
-                Notebook Dell
+                {{ produto.name }}
             </div>
-
-            <div class="recent-product">
-                Calculadora HP
-            </div>
+            {% endfor %}
 
         </div>
 
