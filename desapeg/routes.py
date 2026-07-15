@@ -136,7 +136,11 @@ def compraspage():
             continue
 
         seller = User.query.get(product.user_id)
-        can_evaluate = product.sold and product.buyer_id == user_id
+        existing_review = ProductReview.query.filter_by(
+            product_id=product.id,
+            reviewer_id=user_id
+        ).first()
+        can_evaluate = product.sold and product.buyer_id == user_id and existing_review is None
 
         compras.append({
             "product_id": product.id,
