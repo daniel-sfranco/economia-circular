@@ -31,7 +31,48 @@ def productpage():
 
 @main_routes.route('/evaluate')
 def evaluatepage():
-    return render_template("evaluate.html")
+    product_id = request.args.get('product_id')
+    buyer_id = request.args.get('buyer_id')
+    seller_id = request.args.get('seller_id')
+    return render_template(
+        "evaluate.html",
+        product_id=product_id,
+        buyer_id=buyer_id,
+        seller_id=seller_id
+    )
+
+@main_routes.route('/compras')
+def compraspage():
+    user_id = 1
+
+    interests = (
+        db.session.query(ProductInterest)
+        .filter(ProductInterest.user_id == user_id)
+        .order_by(ProductInterest.contact_date.desc())
+        .all()
+    )
+
+    compras = []
+    for interest in interests:
+        product = interest.product
+        if not product:
+            continue
+
+        seller = User.query.get(product.user_id)
+        can_evaluate = product.sold and product.buyer_id == user_id
+
+        compras.append({
+            "product_id": product.id,
+            "product_name": product.name,
+            "seller_name": seller.name if seller else "",
+            "price": product.cost,
+            "buyer_id": user_id,
+            "seller_id": product.user_id,
+            "status": "Vendido" if product.sold else "Interessado",
+            "can_evaluate": can_evaluate
+        })
+
+    return render_template("compras.html", compras=compras)
 
 @main_routes.route('/myproducts')
 def myproducts():

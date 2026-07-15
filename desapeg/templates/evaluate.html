@@ -13,6 +13,14 @@
         <h2>Avalie sua experiência</h2>
         <p class="subtitle">Conte como foi a negociação e ajude outros usuários da comunidade a terem mais confiança.</p>
 
+        {% if product_id or buyer_id or seller_id %}
+            <p class="subtitle">
+                Produto: <strong>{{ product_id or 'não informado' }}</strong><br>
+                Comprador: <strong>{{ buyer_id or 'não informado' }}</strong><br>
+                Vendedor: <strong>{{ seller_id or 'não informado' }}</strong>
+            </p>
+        {% endif %}
+
         <form class="evaluation-form">
             <div class="rating-group">
                 <label class="rating-label" for="rating">Sua nota</label>

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Compras{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/evaluate.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="evaluation-page">
+    <div class="evaluation-card purchases-card">
+        <p class="eyebrow">Interesses recentes</p>
+        <h2>Suas compras e interesses</h2>
+        <p class="subtitle">Aqui ficam os produtos que você demonstrou interesse e os que já foram vendidos para você.</p>
+
+        {% if compras %}
+            <div class="purchase-list">
+                {% for item in compras %}
+                    <article class="purchase-item">
+                        <div class="purchase-main">
+                            <h3>{{ item['product_name'] }}</h3>
+                            <p class="purchase-price">R$ {{ "%.2f"|format(item['price']|default(0, true)) }}</p>
+                        </div>
+
+                        <div class="purchase-meta">
+                            <span><strong>Vendedor:</strong> {{ item['seller_name'] or 'Não informado' }}</span>
+                            <span><strong>Status:</strong> {{ item['status'] }}</span>
+                        </div>
+
+                        {% if item['can_evaluate'] %}
+                            <a
+                                class="btn btn-primary purchase-action"
+                                href="{{ url_for('main_routes.evaluatepage', product_id=item['product_id'], buyer_id=item['buyer_id'], seller_id=item['seller_id']) }}"
+                            >
+                                Avaliar
+                            </a>
+                        {% endif %}
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="subtitle">Nenhum interesse registrado ainda.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
