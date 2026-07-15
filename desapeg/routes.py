@@ -31,16 +31,91 @@ def aboutpage():
 def productpage():
     return render_template("product.html")
 
-@main_routes.route('/evaluate')
+@main_routes.route('/evaluate', methods=['GET', 'POST'])
 def evaluatepage():
-    product_id = request.args.get('product_id')
-    buyer_id = request.args.get('buyer_id')
-    seller_id = request.args.get('seller_id')
+    product_id = request.args.get('product_id') or request.form.get('product_id')
+    buyer_id = request.args.get('buyer_id') or request.form.get('buyer_id')
+    seller_id = request.args.get('seller_id') or request.form.get('seller_id')
+
+    if request.method == 'POST':
+        score_raw = request.form.get('rating', '').strip()
+        comment = request.form.get('comment', '').strip() or None
+
+        if not score_raw:
+            return render_template(
+                "evaluate.html",
+                product_id=product_id,
+                buyer_id=buyer_id,
+                seller_id=seller_id,
+                error_message='Selecione uma nota antes de enviar a avaliação.'
+            )
+
+        try:
+            score = int(score_raw)
+        except ValueError:
+            return render_template(
+                "evaluate.html",
+                product_id=product_id,
+                buyer_id=buyer_id,
+                seller_id=seller_id,
+                error_message='A nota deve ser um número válido.'
+            )
+
+        if not seller_id:
+            return render_template(
+                "evaluate.html",
+                product_id=product_id,
+                buyer_id=buyer_id,
+                seller_id=seller_id,
+                error_message='Não foi possível identificar o vendedor da avaliação.'
+            )
+
+        seller = User.query.get(int(seller_id))
+        if not seller:
+            return render_template(
+                "evaluate.html",
+                product_id=product_id,
+                buyer_id=buyer_id,
+                seller_id=seller_id,
+                error_message='Vendedor não encontrado.'
+            )
+
+        reviewer_id = 1
+
+        existing_review = None
+        if product_id:
+            existing_review = ProductReview.query.filter_by(
+                product_id=int(product_id),
+                reviewer_id=reviewer_id
+            ).first()
+
+        if existing_review:
+            existing_review.score = score
+            existing_review.comment = (comment[:80] if comment else None)
+            existing_review.target_user_id = seller.id
+        else:
+            review = ProductReview(
+                product_id=int(product_id) if product_id else 0,
+                reviewer_id=reviewer_id,
+                target_user_id=seller.id,
+                score=score,
+                comment=(comment[:80] if comment else None)
+            )
+            db.session.add(review)
+
+        reviews = ProductReview.query.filter_by(target_user_id=seller.id).all()
+        seller.rating_count = len(reviews)
+        seller.rating_avg = round(sum(review.score for review in reviews) / len(reviews), 1) if reviews else 0.0
+
+        db.session.commit()
+        return redirect(url_for('main_routes.dashboard', seller_id=seller.id))
+
     return render_template(
         "evaluate.html",
         product_id=product_id,
         buyer_id=buyer_id,
-        seller_id=seller_id
+        seller_id=seller_id,
+        error_message=None
     )
 
 @main_routes.route('/compras')
@@ -458,18 +533,8 @@ def dashboard(seller_id):
         .all()
     )
 
-    '''average_rating = (
-        db.session.query(db.func.avg(ProductReview.score))
-        .filter(ProductReview.target_user_id == seller_id)
-        .scalar()
-    )
-    average_rating = (
-        round(average_rating, 1)
-        if average_rating is not None
-        else "-"
-    )'''
-
-    average_rating = '-'
+    seller = User.query.get(seller_id)
+    average_rating = seller.rating_avg if seller and seller.rating_avg else '-'
 
     return render_template(
         "dashboard.html",
