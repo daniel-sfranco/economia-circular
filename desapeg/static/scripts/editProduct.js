@@ -49,6 +49,7 @@ const categoryInput = document.getElementById('category-input');
 const hiddenCategories = document.getElementById('hidden-categories');
 const tagsContainer = document.getElementById('tags-container');
 const dropdownList = document.getElementById('autocomplete-list');
+const markSoldButton = document.getElementById('mark-sold-button');
 
 if (categoryInput) {
     let availableCategories = [];
@@ -121,6 +122,36 @@ if (categoryInput) {
             e.preventDefault();
         }
     });
+
+    if (markSoldButton) {
+        markSoldButton.addEventListener('click', async function() {
+            const selectedBuyer = document.querySelector('input[name="buyer"]:checked');
+
+            if (!selectedBuyer) {
+                alert('Selecione um comprador antes de marcar como vendido.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/product/${productId}/sell`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ buyer_id: Number(selectedBuyer.value) })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Não foi possível registrar a venda.');
+                }
+
+                alert(`Produto marcado como vendido para ${data.buyer_name}.`);
+                window.location.reload();
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+    }
 
     document.addEventListener('click', function(e) {
         if (e.target !== categoryInput && e.target !== dropdownList) {

@@ -5,6 +5,8 @@ from flask import Blueprint, jsonify, render_template, request, redirect, url_fo
 from desapeg.builders import ProductSearchBuilder
 from desapeg.models.category import Category
 from .models.product import Product
+from .models.user import User
+from .models.product_interest import ProductInterest
 from .forms import ProductForm
 from .imageHandler import compress_and_save_image
 from .extensions import db
@@ -45,10 +47,44 @@ def myproducts():
 def edit_product_page(prod_id):
     produto = Product.query.get_or_404(prod_id)
 
+    interesses = (
+        db.session.query(ProductInterest.user_id, User.name)
+        .join(User, ProductInterest.user_id == User.id)
+        .filter(ProductInterest.product_id == produto.id)
+        .all()
+    )
+
+    buyer = User.query.get(produto.buyer_id) if produto.buyer_id else None
+
     return render_template(
         "editproduct.html",
-        produto=produto
+        produto=produto,
+        interesses=interesses,
+        buyer_name=buyer.name if buyer else None
     )
+
+@main_routes.route('/api/product/<int:prod_id>/sell', methods=['POST'])
+def mark_product_sold(prod_id):
+    produto = Product.query.get_or_404(prod_id)
+    data = request.get_json(silent=True) or {}
+    buyer_id = data.get('buyer_id')
+
+    if buyer_id is None:
+        return jsonify({"error": "Selecione um comprador."}), 400
+
+    buyer = User.query.get(int(buyer_id))
+    if not buyer:
+        return jsonify({"error": "Usuário não encontrado."}), 404
+
+    produto.sold = True
+    produto.buyer_id = buyer.id
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "buyer_id": buyer.id,
+        "buyer_name": buyer.name
+    })
 
 @main_routes.route('/api/product/<int:prod_id>', methods=['PUT'])
 def update_product(prod_id):
