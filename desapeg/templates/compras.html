@@ -30,7 +30,7 @@
                         {% if item['can_evaluate'] %}
                             <a
                                 class="btn btn-primary purchase-action"
-                                href="{{ url_for('main_routes.evaluatepage', product_id=item['product_id'], buyer_id=item['buyer_id'], seller_id=item['seller_id']) }}"
+                                href="{{ url_for('main_routes.evaluatepage', product_id=item['product_id'], buyer_id=item['buyer_id'], seller_id=item['seller_id'], sale_id=item['sale_id'] or '') }}"
                             >
                                 Avaliar
                             </a>

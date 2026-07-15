@@ -126,6 +126,8 @@ if (categoryInput) {
     if (markSoldButton) {
         markSoldButton.addEventListener('click', async function() {
             const selectedBuyer = document.querySelector('input[name="buyer"]:checked');
+            const quantityInput = document.getElementById('sale-quantity');
+            const quantity = quantityInput ? Number(quantityInput.value) : 1;
 
             if (!selectedBuyer) {
                 alert('Selecione um comprador antes de marcar como vendido.');
@@ -136,7 +138,10 @@ if (categoryInput) {
                 const response = await fetch(`/api/product/${productId}/sell`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ buyer_id: Number(selectedBuyer.value) })
+                    body: JSON.stringify({
+                        buyer_id: Number(selectedBuyer.value),
+                        quantity: quantity
+                    })
                 });
 
                 const data = await response.json();

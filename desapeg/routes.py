@@ -9,6 +9,7 @@ from desapeg.models.category import Category
 from .models.product import Product
 from .models.user import User
 from .models.product_interest import ProductInterest
+from .models.sale import Sale
 from .forms import ProductForm
 from .imageHandler import compress_and_save_image
 from .extensions import db
@@ -36,6 +37,7 @@ def evaluatepage():
     product_id = request.args.get('product_id') or request.form.get('product_id')
     buyer_id = request.args.get('buyer_id') or request.form.get('buyer_id')
     seller_id = request.args.get('seller_id') or request.form.get('seller_id')
+    sale_id = request.args.get('sale_id') or request.form.get('sale_id')
 
     if request.method == 'POST':
         score_raw = request.form.get('rating', '').strip()
@@ -47,6 +49,7 @@ def evaluatepage():
                 product_id=product_id,
                 buyer_id=buyer_id,
                 seller_id=seller_id,
+                sale_id=sale_id,
                 error_message='Selecione uma nota antes de enviar a avaliação.'
             )
 
@@ -58,6 +61,7 @@ def evaluatepage():
                 product_id=product_id,
                 buyer_id=buyer_id,
                 seller_id=seller_id,
+                sale_id=sale_id,
                 error_message='A nota deve ser um número válido.'
             )
 
@@ -67,6 +71,7 @@ def evaluatepage():
                 product_id=product_id,
                 buyer_id=buyer_id,
                 seller_id=seller_id,
+                sale_id=sale_id,
                 error_message='Não foi possível identificar o vendedor da avaliação.'
             )
 
@@ -77,13 +82,19 @@ def evaluatepage():
                 product_id=product_id,
                 buyer_id=buyer_id,
                 seller_id=seller_id,
+                sale_id=sale_id,
                 error_message='Vendedor não encontrado.'
             )
 
         reviewer_id = 1
 
         existing_review = None
-        if product_id:
+        if sale_id:
+            existing_review = ProductReview.query.filter_by(
+                sale_id=int(sale_id),
+                reviewer_id=reviewer_id
+            ).first()
+        elif product_id:
             existing_review = ProductReview.query.filter_by(
                 product_id=int(product_id),
                 reviewer_id=reviewer_id
@@ -93,11 +104,14 @@ def evaluatepage():
             existing_review.score = score
             existing_review.comment = (comment[:80] if comment else None)
             existing_review.target_user_id = seller.id
+            if sale_id:
+                existing_review.sale_id = int(sale_id)
         else:
             review = ProductReview(
                 product_id=int(product_id) if product_id else 0,
                 reviewer_id=reviewer_id,
                 target_user_id=seller.id,
+                sale_id=int(sale_id) if sale_id else None,
                 score=score,
                 comment=(comment[:80] if comment else None)
             )
@@ -110,11 +124,32 @@ def evaluatepage():
         db.session.commit()
         return redirect(url_for('main_routes.dashboard', seller_id=seller.id))
 
+    product_name = None
+    buyer_name = None
+    seller_name = None
+
+    if product_id:
+        product = Product.query.get(int(product_id))
+        if product:
+            product_name = product.name
+    if buyer_id:
+        buyer = User.query.get(int(buyer_id))
+        if buyer:
+            buyer_name = buyer.name
+    if seller_id:
+        seller = User.query.get(int(seller_id))
+        if seller:
+            seller_name = seller.name
+
     return render_template(
         "evaluate.html",
         product_id=product_id,
         buyer_id=buyer_id,
         seller_id=seller_id,
+        sale_id=sale_id,
+        product_name=product_name,
+        buyer_name=buyer_name,
+        seller_name=seller_name,
         error_message=None
     )
 
@@ -130,18 +165,13 @@ def compraspage():
     )
 
     compras = []
+    # 1. Ativos (onde ainda possui estoque)
     for interest in interests:
         product = interest.product
-        if not product:
+        if not product or product.quantity == 0:
             continue
 
         seller = User.query.get(product.user_id)
-        existing_review = ProductReview.query.filter_by(
-            product_id=product.id,
-            reviewer_id=user_id
-        ).first()
-        can_evaluate = product.sold and product.buyer_id == user_id and existing_review is None
-
         compras.append({
             "product_id": product.id,
             "product_name": product.name,
@@ -149,7 +179,37 @@ def compraspage():
             "price": product.cost,
             "buyer_id": user_id,
             "seller_id": product.user_id,
-            "status": "Vendido" if product.sold else "Interessado",
+            "status": "Interessado",
+            "can_evaluate": False
+        })
+
+    # 2. Vendidos (histórico de compras reais da tabela Sale)
+    sales = (
+        db.session.query(Sale)
+        .filter(Sale.buyer_id == user_id)
+        .order_by(Sale.sold_date.desc())
+        .all()
+    )
+    for sale in sales:
+        product = sale.product
+        if not product:
+            continue
+
+        seller = User.query.get(product.user_id)
+        existing_review = ProductReview.query.filter_by(
+            sale_id=sale.id
+        ).first()
+        can_evaluate = existing_review is None
+
+        compras.append({
+            "product_id": product.id,
+            "product_name": f"{product.name} (x{sale.quantity})" if sale.quantity > 1 else product.name,
+            "seller_name": seller.name if seller else "",
+            "price": product.cost * sale.quantity,
+            "buyer_id": user_id,
+            "seller_id": product.user_id,
+            "sale_id": sale.id,
+            "status": "Vendido",
             "can_evaluate": can_evaluate
         })
 
@@ -157,7 +217,7 @@ def compraspage():
 
 @main_routes.route('/myproducts')
 def myproducts():
-    meus_produtos = Product.query.filter_by(user_id=1).all()
+    meus_produtos = Product.query.filter_by(user_id=1).filter(Product.quantity > 0).all()
     
     return render_template(
         "myproducts.html", 
@@ -190,6 +250,7 @@ def mark_product_sold(prod_id):
     produto = Product.query.get_or_404(prod_id)
     data = request.get_json(silent=True) or {}
     buyer_id = data.get('buyer_id')
+    quantity_sold = int(data.get('quantity', 1))
 
     if buyer_id is None:
         return jsonify({"error": "Selecione um comprador."}), 400
@@ -198,8 +259,31 @@ def mark_product_sold(prod_id):
     if not buyer:
         return jsonify({"error": "Usuário não encontrado."}), 404
 
-    produto.sold = True
+    if quantity_sold <= 0:
+        return jsonify({"error": "A quantidade vendida deve ser maior que zero."}), 400
+
+    if quantity_sold > produto.quantity:
+        return jsonify({"error": f"Quantidade solicitada ({quantity_sold}) é maior que a disponível ({produto.quantity})."}), 400
+
+    # 1. Update product quantity
+    produto.quantity = max(0, produto.quantity - quantity_sold)
+    
+    # 2. Record sale
+    sale = Sale(product_id=produto.id, buyer_id=buyer.id, quantity=quantity_sold)
+    db.session.add(sale)
+
+    # 3. For compatibility/legacy support, set buyer_id and sold = True
     produto.buyer_id = buyer.id
+    produto.sold = True
+
+    # 4. Remove interest for this buyer on this product
+    interest = ProductInterest.query.filter_by(
+        product_id=produto.id,
+        user_id=buyer.id
+    ).first()
+    if interest:
+        db.session.delete(interest)
+
     db.session.commit()
 
     return jsonify({

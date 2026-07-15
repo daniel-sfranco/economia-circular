@@ -13,11 +13,11 @@
         <h2>Avalie sua experiência</h2>
         <p class="subtitle">Conte como foi a negociação e ajude outros usuários da comunidade a terem mais confiança.</p>
 
-        {% if product_id or buyer_id or seller_id %}
+        {% if product_name or buyer_name or seller_name or product_id or buyer_id or seller_id %}
             <p class="subtitle">
-                Produto: <strong>{{ product_id or 'não informado' }}</strong><br>
-                Comprador: <strong>{{ buyer_id or 'não informado' }}</strong><br>
-                Vendedor: <strong>{{ seller_id or 'não informado' }}</strong>
+                Produto: <strong>{{ product_name or product_id or 'não informado' }}</strong><br>
+                Comprador: <strong>{{ buyer_name or buyer_id or 'não informado' }}</strong><br>
+                Vendedor: <strong>{{ seller_name or seller_id or 'não informado' }}</strong>
             </p>
         {% endif %}
 
@@ -40,6 +40,7 @@
                 <input type="hidden" name="product_id" value="{{ product_id or '' }}">
                 <input type="hidden" name="buyer_id" value="{{ buyer_id or '' }}">
                 <input type="hidden" name="seller_id" value="{{ seller_id or '' }}">
+                <input type="hidden" name="sale_id" value="{{ sale_id or '' }}">
             </div>
 
             <label class="field">
