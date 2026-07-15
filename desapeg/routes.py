@@ -3,6 +3,8 @@ import os
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, current_app
 
 from desapeg.builders import ProductSearchBuilder
+from desapeg.models.product_interest import ProductInterest
+from desapeg.models.product_review import ProductReview
 from desapeg.models.category import Category
 from .models.product import Product
 from .models.user import User
@@ -398,6 +400,82 @@ def api_similar_products(prod_id):
 
     return jsonify([p.to_dict() for p in similar_products])
 
-@main_routes.route('/dashboard')
-def dashboard():
-    return render_template("dashboard.html")
+@main_routes.route("/api/productInterest/<int:product_id>", methods=["POST"])
+def register_product_interest(product_id):
+
+    product = db.session.get(Product, product_id)
+
+    if not product:
+        return "", 404
+
+    user_id = 1
+
+    interest = ProductInterest.query.filter_by(
+        product_id=product_id,
+        user_id=user_id
+    ).first()
+
+    if not interest:
+        interest = ProductInterest(
+            product_id=product_id,
+            user_id=user_id
+        )
+
+        db.session.add(interest)
+        db.session.commit()
+
+    return "", 204
+
+@main_routes.route('/dashboard/<int:seller_id>')
+def dashboard(seller_id):
+
+    total_products = Product.query.filter_by(user_id=seller_id).count()
+    recent_products = (
+        Product.query
+        .filter_by(user_id=seller_id)
+        .order_by(Product.post_date.desc())
+        .limit(5)
+        .all()
+    )
+
+    total_contacts = (
+        ProductInterest.query
+        .join(Product)
+        .filter(Product.user_id == seller_id)
+        .count()
+    )
+
+    top_categories = (
+        db.session.query(
+            Category.name,
+            db.func.count(Product.id).label("total")
+        )
+        .join(Category.products)
+        .filter(Product.user_id == seller_id)
+        .group_by(Category.id) # ..., Category.name
+        .order_by(db.func.count(Product.id).desc())
+        .limit(5)
+        .all()
+    )
+
+    '''average_rating = (
+        db.session.query(db.func.avg(ProductReview.score))
+        .filter(ProductReview.target_user_id == seller_id)
+        .scalar()
+    )
+    average_rating = (
+        round(average_rating, 1)
+        if average_rating is not None
+        else "-"
+    )'''
+
+    average_rating = '-'
+
+    return render_template(
+        "dashboard.html",
+        total_products=total_products,
+        total_contacts=total_contacts,
+        average_rating=average_rating,
+        recent_products=recent_products,
+        top_categories=top_categories,
+    )
