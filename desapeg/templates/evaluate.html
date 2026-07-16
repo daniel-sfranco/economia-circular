@@ -26,6 +26,8 @@
         {% endif %}
 
         <form class="evaluation-form" method="post">
+            {{ form.csrf_token }}
+
             <div class="rating-group">
                 <label class="rating-label" for="rating">Sua nota</label>
                 <div class="stars" role="radiogroup" aria-label="Avaliação do produto">
@@ -36,23 +38,35 @@
                     <button type="button" class="star" data-value="5" aria-label="Avaliar com 5 estrelas">★</button>
                 </div>
                 <p class="rating-help" id="rating-help">Selecione uma nota</p>
-                <input type="hidden" name="rating" id="rating" value="">
-                <input type="hidden" name="product_id" value="{{ product_id or '' }}">
-                <input type="hidden" name="buyer_id" value="{{ buyer_id or '' }}">
-                <input type="hidden" name="seller_id" value="{{ seller_id or '' }}">
-                <input type="hidden" name="sale_id" value="{{ sale_id or '' }}">
+                
+                
+                {{ form.rating(id="rating", type="hidden") }}
+                
+                {% if form.rating.errors %}
+                    <span style="color: #c0392b; font-size: 0.9em;">{{ form.rating.errors[0] }}</span>
+                {% endif %}
+
+                {{ form.product_id(value=product_id or '') }}
+                {{ form.buyer_id(value=buyer_id or '') }}
+                {{ form.seller_id(value=seller_id or '') }}
+                {{ form.sale_id(value=sale_id or '') }}
             </div>
 
             <label class="field">
                 <span>Comentário</span>
-                <textarea name="comment" rows="5" placeholder="Descreva como foi a experiência com o comprador ou vendedor..."></textarea>
+                {{ form.comment(rows="5", placeholder="Descreva como foi a experiência com o comprador ou vendedor...", maxlength="80") }}
+                
+                {% if form.comment.errors %}
+                    <span style="color: #c0392b; font-size: 0.9em;">{{ form.comment.errors[0] }}</span>
+                {% endif %}
             </label>
 
             <div class="actions">
                 <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Enviar avaliação</button>
+                {{ form.submit(class="btn btn-primary") }}
             </div>
         </form>
+
     </div>
 </section>
 <script src="{{ url_for('static', filename='scripts/evaluate.js') }}"></script>

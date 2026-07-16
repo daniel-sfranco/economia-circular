@@ -13,6 +13,7 @@ from .models.user import User
 from .models.product_interest import ProductInterest
 from .models.sale import Sale
 from .forms import ProductForm
+from .evaluation import ReviewForm
 from .imageHandler import compress_and_save_image
 from .extensions import db
 from sqlalchemy import or_
@@ -36,64 +37,60 @@ def productpage():
 
 @main_routes.route('/evaluate', methods=['GET', 'POST'])
 def evaluatepage():
+    form = ReviewForm()
+
     product_id = request.args.get('product_id') or request.form.get('product_id')
     buyer_id = request.args.get('buyer_id') or request.form.get('buyer_id')
     seller_id = request.args.get('seller_id') or request.form.get('seller_id')
     sale_id = request.args.get('sale_id') or request.form.get('sale_id')
 
-    # REFATORAÇÃO (Long Method): 
-    # Extração das chamadas repetidas de render_template para uma função auxiliar, 
-    # aplicando o princípio DRY (Don't Repeat Yourself)
     def render_error(mensagem):
         return render_template(
             "evaluate.html",
+            form=form,
             product_id=product_id, buyer_id=buyer_id,
             seller_id=seller_id, sale_id=sale_id,
             error_message=mensagem
         )
 
-    if request.method == 'POST':
-        score_raw = request.form.get('rating', '').strip()
-        comment = request.form.get('comment', '').strip() or None
+    if form.validate_on_submit():
+        score = form.rating.data
+        comment = form.comment.data
 
-        # Validações enxutas
-        if not score_raw:
-            return render_error('Selecione uma nota antes de enviar a avaliação.')
-        
-        try:
-            score = int(score_raw)
-        except ValueError:
-            return render_error('A nota deve ser um número válido.')
+        f_product_id = form.product_id.data or product_id
+        f_buyer_id = form.buyer_id.data or buyer_id
+        f_seller_id = form.seller_id.data or seller_id
+        f_sale_id = form.sale_id.data or sale_id
 
-        if not seller_id:
+        if not f_seller_id:
             return render_error('Não foi possível identificar o vendedor da avaliação.')
 
-        seller = User.query.get(int(seller_id))
+        seller = User.query.get(int(f_seller_id))
         if not seller:
             return render_error('Vendedor não encontrado.')
 
         reviewer_id = 1 
 
         existing_review = None
-        if sale_id:
-            existing_review = ProductReview.query.filter_by(sale_id=int(sale_id), reviewer_id=reviewer_id).first()
-        elif product_id:
-            existing_review = ProductReview.query.filter_by(product_id=int(product_id), reviewer_id=reviewer_id).first()
+        if f_sale_id:
+            existing_review = ProductReview.query.filter_by(sale_id=int(f_sale_id), reviewer_id=reviewer_id).first()
+        elif f_product_id:
+            existing_review = ProductReview.query.filter_by(product_id=int(f_product_id), reviewer_id=reviewer_id).first()
 
         if existing_review:
             existing_review.score = score
-            existing_review.comment = (comment[:80] if comment else None)
+            existing_review.comment = comment  # A limitação de 80 caracteres já foi validada pelo form
             existing_review.target_user_id = seller.id
-            if sale_id:
-                existing_review.sale_id = int(sale_id)
+            if f_sale_id:
+                existing_review.sale_id = int(f_sale_id)
         else:
             review = ProductReview(
-                product_id=int(product_id) if product_id else 0,
+                product_id=int(f_product_id) if f_product_id else 0,
                 reviewer_id=reviewer_id,
                 target_user_id=seller.id,
-                sale_id=int(sale_id) if sale_id else None,
+                sale_id=int(f_sale_id) if f_sale_id else None,
                 score=score,
-                comment=(comment[:80] if comment else None)
+                comment=comment
             )
             db.session.add(review)
 
@@ -117,6 +114,7 @@ def evaluatepage():
 
     return render_template(
         "evaluate.html",
+        form=form,
         product_id=product_id, buyer_id=buyer_id,
         seller_id=seller_id, sale_id=sale_id,
         product_name=product_name, buyer_name=buyer_name,
