@@ -19,3 +19,4 @@ class ProductReview(db.Model):
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     sale = db.relationship("Sale", backref=db.backref("review", uselist=False, cascade="all, delete-orphan"))
+    product = db.relationship("Product", backref=db.backref("reviews", lazy=True))
