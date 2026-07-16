@@ -13,7 +13,19 @@
         <h2>Avalie sua experiência</h2>
         <p class="subtitle">Conte como foi a negociação e ajude outros usuários da comunidade a terem mais confiança.</p>
 
-        <form class="evaluation-form">
+        {% if product_name or buyer_name or seller_name or product_id or buyer_id or seller_id %}
+            <p class="subtitle">
+                Produto: <strong>{{ product_name or product_id or 'não informado' }}</strong><br>
+                Comprador: <strong>{{ buyer_name or buyer_id or 'não informado' }}</strong><br>
+                Vendedor: <strong>{{ seller_name or seller_id or 'não informado' }}</strong>
+            </p>
+        {% endif %}
+
+        {% if error_message %}
+            <p class="subtitle" style="color: #c0392b;">{{ error_message }}</p>
+        {% endif %}
+
+        <form class="evaluation-form" method="post">
             <div class="rating-group">
                 <label class="rating-label" for="rating">Sua nota</label>
                 <div class="stars" role="radiogroup" aria-label="Avaliação do produto">
@@ -25,6 +37,10 @@
                 </div>
                 <p class="rating-help" id="rating-help">Selecione uma nota</p>
                 <input type="hidden" name="rating" id="rating" value="">
+                <input type="hidden" name="product_id" value="{{ product_id or '' }}">
+                <input type="hidden" name="buyer_id" value="{{ buyer_id or '' }}">
+                <input type="hidden" name="seller_id" value="{{ seller_id or '' }}">
+                <input type="hidden" name="sale_id" value="{{ sale_id or '' }}">
             </div>
 
             <label class="field">
@@ -33,7 +49,7 @@
             </label>
 
             <div class="actions">
-                <button type="button" class="btn btn-secondary">Cancelar</button>
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancelar</button>
                 <button type="submit" class="btn btn-primary">Enviar avaliação</button>
             </div>
         </form>

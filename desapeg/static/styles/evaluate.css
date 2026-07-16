@@ -122,6 +122,55 @@
     color: white;
 }
 
+.purchases-card {
+    width: min(100%, 760px);
+}
+
+.purchase-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.purchase-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid #e7e2d9;
+    border-radius: 18px;
+    background: #fcfbf8;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.purchase-main {
+    flex: 1;
+}
+
+.purchase-main h3 {
+    margin: 0 0 0.25rem;
+    color: #2f4f2f;
+}
+
+.purchase-price {
+    margin: 0;
+    color: #ea7525;
+    font-weight: 700;
+}
+
+.purchase-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    color: #5f6b66;
+    font-size: 0.95rem;
+}
+
+.purchase-action {
+    white-space: nowrap;
+}
+
 .btn-secondary {
     background: #f2efe8;
     color: #2f4f2f;
@@ -130,6 +179,16 @@
 @media (max-width: 600px) {
     .evaluation-card {
         padding: 1.4rem;
+    }
+
+    .purchase-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .purchase-action {
+        width: 100%;
+        text-align: center;
     }
 
     .actions {

@@ -123,25 +123,37 @@
             Os usuários abaixo demonstraram interesse neste produto. Selecione o comprador e marque o produto como vendido.
         </p>
 
+        {% if produto.sold %}
+            <p class="sale-description">
+                Produto marcado como vendido para <strong>{{ buyer_name or 'um usuário' }}</strong>.
+            </p>
+        {% endif %}
+
         <div class="interested-users">
+            {% for interesse in interesses %}
+                <label class="interested-user">
+                    <input
+                        type="radio"
+                        name="buyer"
+                        value="{{ interesse.user_id }}"
+                        {% if produto.buyer_id == interesse.user_id %}checked{% endif %}
+                    >
+                    {{ interesse.name }}
+                </label>
+            {% endfor %}
+        </div>
 
-            <!-- Dados fictícios por enquanto -->
-
-            <label class="interested-user">
-                <input type="radio" name="buyer" value="1">
-                Gabriel
-            </label>
-
-            <label class="interested-user">
-                <input type="radio" name="buyer" value="2">
-                João
-            </label>
-
-            <label class="interested-user">
-                <input type="radio" name="buyer" value="3">
-                Maria
-            </label>
-
+        <div style="margin: 15px 0;">
+            <label class="field-label" for="sale-quantity">Quantidade vendida:</label>
+            <input
+                type="number"
+                id="sale-quantity"
+                class="input-number"
+                value="1"
+                min="1"
+                max="{{ produto.quantity }}"
+                style="width: 80px; padding: 6px; border-radius: 4px; border: 1px solid #ccc;"
+            >
         </div>
 
         <button
