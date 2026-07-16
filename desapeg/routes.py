@@ -6,6 +6,7 @@ from desapeg.builders import ProductSearchBuilder
 from desapeg.models.product_interest import ProductInterest
 from desapeg.models.product_review import ProductReview
 from desapeg.models.category import Category
+from desapeg.services import execute_product_sale
 from .models.product import Product
 from .models.user import User
 from .models.product_interest import ProductInterest
@@ -230,35 +231,22 @@ def mark_product_sold(prod_id):
     if quantity_sold <= 0:
         return jsonify({"error": "A quantidade vendida deve ser maior que zero."}), 400
 
-    if quantity_sold > produto.quantity:
-        return jsonify({"error": f"Quantidade solicitada ({quantity_sold}) é maior que a disponível ({produto.quantity})."}), 400
+    try:
+        # REFATORAÇÃO (Coupler / Transaction Script resolvido):
+        # O controlador de rotas agora atua apenas como interface HTTP. Ele não conhece as regras 
+        # internas de redução de stock, criação de histórico de vendas ou remoção de interesses.
+        # Toda essa orquestração foi delegada para o serviço especialista.
+        execute_product_sale(produto, buyer.id, quantity_sold)
+        db.session.commit()
 
-    # 1. Update product quantity
-    produto.quantity = max(0, produto.quantity - quantity_sold)
-    
-    # 2. Record sale
-    sale = Sale(product_id=produto.id, buyer_id=buyer.id, quantity=quantity_sold)
-    db.session.add(sale)
-
-    # 3. For compatibility/legacy support, set buyer_id and sold = True
-    produto.buyer_id = buyer.id
-    produto.sold = True
-
-    # 4. Remove interest for this buyer on this product
-    interest = ProductInterest.query.filter_by(
-        product_id=produto.id,
-        user_id=buyer.id
-    ).first()
-    if interest:
-        db.session.delete(interest)
-
-    db.session.commit()
-
-    return jsonify({
-        "success": True,
-        "buyer_id": buyer.id,
-        "buyer_name": buyer.name
-    })
+        return jsonify({
+            "success": True,
+            "buyer_id": buyer.id,
+            "buyer_name": buyer.name
+        })
+    except ValueError as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
 
 @main_routes.route('/api/product/<int:prod_id>', methods=['PUT'])
 def update_product(prod_id):
