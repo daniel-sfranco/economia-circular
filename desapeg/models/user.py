@@ -1,5 +1,5 @@
 from desapeg.extensions import db
-from product_review import ProductReview
+from desapeg.models.product_review import ProductReview
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
