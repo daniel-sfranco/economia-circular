@@ -65,5 +65,46 @@
 
     </section>
 
+    <section class="dashboard-section">
+
+        <h2>Avaliações recentes</h2>
+
+        <div class="recent-reviews-grid">
+
+            {% for review in recent_reviews %}
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-product">{{ review.product.name if review.product else 'Produto Desconhecido' }}</span>
+                    <span class="review-rating" aria-label="Nota: {{ review.score }} de 5">
+                        {% for i in range(5) %}
+                            {% if i < review.score %}
+                                ★
+                            {% else %}
+                                ☆
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+                <p class="review-comment">
+                    {% if review.comment %}
+                        "{{ review.comment }}"
+                    {% else %}
+                        <em>Sem comentário</em>
+                    {% endif %}
+                </p>
+                <div class="review-footer">
+                    <span class="review-date">{{ review.created_at.strftime('%d/%m/%Y') if review.created_at else '' }}</span>
+                </div>
+            </div>
+            {% else %}
+            <div class="no-reviews">
+                Nenhuma avaliação recebida ainda.
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </section>
+
 </div>
 {% endblock %}

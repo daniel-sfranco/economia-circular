@@ -32,10 +32,10 @@ class ProductFormTestCase(unittest.TestCase):
     def test_form_submission_valid(self):
         # Simula upload de imagem para criar um produto
         data = {
-                'prod_name': 'Produto Teste',
+                'name': 'Produto Teste',
                 'description': 'Descrição muito legal',
                 'quantity': '10',
-                'price': '100.50',
+                'cost': '100.50',
                 'condition': 'Novo',
                 'usage_time': 'Nunca usado',
                 'pickup_location': 'Campinas',

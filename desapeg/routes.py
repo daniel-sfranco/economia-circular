@@ -513,6 +513,14 @@ def dashboard(seller_id):
     seller = User.query.get(seller_id)
     average_rating = seller.rating_avg if seller and seller.rating_avg else '-'
 
+    recent_reviews = (
+        ProductReview.query
+        .filter_by(target_user_id=seller_id)
+        .order_by(ProductReview.created_at.desc())
+        .limit(3)
+        .all()
+    )
+
     return render_template(
         "dashboard.html",
         total_products=total_products,
@@ -520,4 +528,5 @@ def dashboard(seller_id):
         average_rating=average_rating,
         recent_products=recent_products,
         top_categories=top_categories,
+        recent_reviews=recent_reviews,
     )
