@@ -1,5 +1,4 @@
 import json
-import os
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, current_app
 from .imageHandler import delete_product_images, process_and_save_images
 
@@ -13,7 +12,6 @@ from .models.user import User
 from .models.product_interest import ProductInterest
 from .models.sale import Sale
 from .forms import ProductForm
-from .imageHandler import compress_and_save_image
 from .extensions import db
 from sqlalchemy import or_
 from datetime import datetime
