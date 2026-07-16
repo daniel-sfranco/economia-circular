@@ -22,9 +22,9 @@ class ProductFormTestCase(unittest.TestCase):
     # envio inválido (sem imagem)
     def test_form_sem_imagem(self):
         response = self.client.post('/forms', data={
-            'prod_name': 'Produto Teste',
+            'name': 'Produto Teste',
             'description': 'Descrição teste',
-            'price': '100.50',
+            'cost': '100.50',
             'quantity': '10'
         })
 
