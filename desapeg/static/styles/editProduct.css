@@ -24,3 +24,52 @@
 .btn-danger:hover {
     background-color: #da190b;
 }
+
+.sale-section {
+    margin-top: 40px;
+    padding: 24px;
+    background-color: #ffffff;
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+}
+
+.sale-section h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #2E7D32;
+}
+
+.sale-description {
+    margin-bottom: 20px;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.interested-users {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.interested-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease,
+                border-color 0.2s ease;
+}
+
+.interested-user:hover {
+    background-color: #f7f7f7;
+    border-color: #2E7D32;
+}
+
+.interested-user input[type="radio"] {
+    cursor: pointer;
+    transform: scale(1.15);
+}

@@ -5,14 +5,7 @@ from desapeg.app import app
 from desapeg.extensions import db
 from desapeg.models.category import Category
 from desapeg.models.product import Product
-
-# Função auxiliar para criar uma imagem válida em memória
-def create_test_image():
-    img = Image.new('RGB', (10, 10), color='red')
-    img_bytes = io.BytesIO()
-    img.save(img_bytes, format='JPEG')
-    img_bytes.seek(0)
-    return img_bytes
+from desapeg.tests.test_utils import create_test_image
 
 class ProductDBTestCase(unittest.TestCase):
 
@@ -33,10 +26,10 @@ class ProductDBTestCase(unittest.TestCase):
             response = self.client.post(
             '/forms',
             data={
-                'prod_name': 'Produto Teste',
+                'name': 'Produto Teste',
                 'description': 'Descrição muito legal',
                 'quantity': '10',
-                'price': '50.50',
+                'cost': '50.50',
                 'condition': 'Novo',
                 'usage_time': 'Nunca usado',
                 'pickup_location': 'Campinas',
@@ -56,10 +49,10 @@ class ProductDBTestCase(unittest.TestCase):
         response = self.client.post(
             '/forms',
             data={
-                'prod_name': 'Produto 2',
+                'name': 'Produto 2',
                 'description': 'Descrição muito legal',
                 'quantity': '10',
-                'price': '100.50',
+                'cost': '100.50',
                 'condition': 'Novo',
                 'usage_time': 'Nunca usado',
                 'pickup_location': 'Campinas',

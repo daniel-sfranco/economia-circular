@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='styles/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <h1 class="page-title">Dashboard do vendedor</h1>
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <h3>Produtos anunciados</h3>
+            <span id="total-products" class="stat-number"> {{ total_products }} </span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Contatos de clientes</h3>
+            <span id="client-contacts" class="stat-number"> {{ total_contacts }} </span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Avaliação média</h3>
+            <span id="average-rating" class="stat-number"> {{ average_rating }} </span>
+        </div>
+
+    </section>
+
+    <section class="dashboard-section">
+
+        <h2>Categorias com mais anúncios</h2>
+
+        <div class="category-list">
+
+            {% for nome, total in top_categories %}
+
+            <div class="category-item">
+                <span>{{ nome }}</span>
+                <span>{{ total }}</span>
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    <section class="dashboard-section">
+
+        <h2>Últimos anúncios</h2>
+
+        <div class="recent-products">
+
+            {% for produto in recent_products %}
+
+            <div class="recent-product">
+                {{ produto.name }}
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    <section class="dashboard-section">
+
+        <h2>Avaliações recentes</h2>
+
+        <div class="recent-reviews-grid">
+
+            {% for review in recent_reviews %}
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-product">{{ review.product.name if review.product else 'Produto Desconhecido' }}</span>
+                    <span class="review-rating" aria-label="Nota: {{ review.score }} de 5">
+                        {% for i in range(5) %}
+                            {% if i < review.score %}
+                                ★
+                            {% else %}
+                                ☆
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+                <p class="review-comment">
+                    {% if review.comment %}
+                        "{{ review.comment }}"
+                    {% else %}
+                        <em>Sem comentário</em>
+                    {% endif %}
+                </p>
+                <div class="review-footer">
+                    <span class="review-date">{{ review.created_at.strftime('%d/%m/%Y') if review.created_at else '' }}</span>
+                </div>
+            </div>
+            {% else %}
+            <div class="no-reviews">
+                Nenhuma avaliação recebida ainda.
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+{% endblock %}

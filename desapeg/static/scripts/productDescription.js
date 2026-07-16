@@ -24,6 +24,8 @@ function loadInfo(id) {
       
       // Correção: mudamos de data.seller para data.owner_name
       document.getElementById("seller").innerHTML = data.owner_name; 
+
+      document.getElementById('sellerBtn').href = `/dashboard/${data.user_id}`;
       
       document.getElementById("description").innerHTML = data.description;
       document.getElementById("date").innerHTML = formatElapsedTime(data.post_date);
@@ -61,8 +63,26 @@ function loadInfo(id) {
       const mensagem =
         `Olá! Vi seu anúncio do produto ${data.name} no DesapegUnicamp e fiquei interessado.`;
 
-      contactBtn.href =
-        `https://wa.me/55${phone}?text=${encodeURIComponent(mensagem)}`;
+      const whatsappUrl =
+    `https://wa.me/55${phone}?text=${encodeURIComponent(mensagem)}`;
+
+      contactBtn.href = "#";
+        contactBtn.addEventListener("click", async function(event) {
+
+            event.preventDefault();
+            try {
+                await fetch(`/api/productInterest/${id}`, {
+                    method: "POST"
+                });
+            } catch(error) {
+                console.error(error);
+            }
+
+            window.open(whatsappUrl, "_blank");
+
+      });
+      //contactBtn.href =
+        //`https://wa.me/55${phone}?text=${encodeURIComponent(mensagem)}`;
 
       const mainImageEl = document.getElementById("product-main-image"); 
       const thumbnailsContainer = document.getElementById("product-thumbnails");

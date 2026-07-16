@@ -1,11 +1,19 @@
 import json
 import os
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, current_app
+from .imageHandler import delete_product_images, process_and_save_images
 
 from desapeg.builders import ProductSearchBuilder
+from desapeg.models.product_interest import ProductInterest
+from desapeg.models.product_review import ProductReview
 from desapeg.models.category import Category
+from desapeg.services import execute_product_sale
 from .models.product import Product
+from .models.user import User
+from .models.product_interest import ProductInterest
+from .models.sale import Sale
 from .forms import ProductForm
+from .evaluation import ReviewForm
 from .imageHandler import compress_and_save_image
 from .extensions import db
 from sqlalchemy import or_
@@ -27,9 +35,157 @@ def aboutpage():
 def productpage():
     return render_template("product.html")
 
+@main_routes.route('/evaluate', methods=['GET', 'POST'])
+def evaluatepage():
+    form = ReviewForm()
+
+    product_id = request.args.get('product_id') or request.form.get('product_id')
+    buyer_id = request.args.get('buyer_id') or request.form.get('buyer_id')
+    seller_id = request.args.get('seller_id') or request.form.get('seller_id')
+    sale_id = request.args.get('sale_id') or request.form.get('sale_id')
+
+    def render_error(mensagem):
+        return render_template(
+            "evaluate.html",
+            form=form,
+            product_id=product_id, buyer_id=buyer_id,
+            seller_id=seller_id, sale_id=sale_id,
+            error_message=mensagem
+        )
+
+    if form.validate_on_submit():
+        score = form.rating.data
+        comment = form.comment.data
+
+        f_product_id = form.product_id.data or product_id
+        f_buyer_id = form.buyer_id.data or buyer_id
+        f_seller_id = form.seller_id.data or seller_id
+        f_sale_id = form.sale_id.data or sale_id
+
+        if not f_seller_id:
+            return render_error('Não foi possível identificar o vendedor da avaliação.')
+
+        seller = User.query.get(int(f_seller_id))
+        if not seller:
+            return render_error('Vendedor não encontrado.')
+
+        reviewer_id = 1 
+
+        existing_review = None
+        if f_sale_id:
+            existing_review = ProductReview.query.filter_by(sale_id=int(f_sale_id), reviewer_id=reviewer_id).first()
+        elif f_product_id:
+            existing_review = ProductReview.query.filter_by(product_id=int(f_product_id), reviewer_id=reviewer_id).first()
+
+        if existing_review:
+            existing_review.score = score
+            existing_review.comment = comment  # A limitação de 80 caracteres já foi validada pelo form
+            existing_review.target_user_id = seller.id
+            if f_sale_id:
+                existing_review.sale_id = int(f_sale_id)
+        else:
+            review = ProductReview(
+                product_id=int(f_product_id) if f_product_id else 0,
+                reviewer_id=reviewer_id,
+                target_user_id=seller.id,
+                sale_id=int(f_sale_id) if f_sale_id else None,
+                score=score,
+                comment=comment
+            )
+            db.session.add(review)
+
+        db.session.flush() 
+        # REFATORAÇÃO (Feature Envy): 
+        # Delegação do cálculo da nota para a entidade dona da informação (User), 
+        # limpando a lógica de negócio de dentro do controlador de rotas.
+        seller.update_rating()
+        db.session.commit()
+
+        return redirect(url_for('main_routes.dashboard', seller_id=seller.id))
+
+    product_name = buyer_name = seller_name = None
+
+    if product_id and (product := Product.query.get(int(product_id))):
+        product_name = product.name
+    if buyer_id and (buyer := User.query.get(int(buyer_id))):
+        buyer_name = buyer.name
+    if seller_id and (seller_obj := User.query.get(int(seller_id))):
+        seller_name = seller_obj.name
+
+    return render_template(
+        "evaluate.html",
+        form=form,
+        product_id=product_id, buyer_id=buyer_id,
+        seller_id=seller_id, sale_id=sale_id,
+        product_name=product_name, buyer_name=buyer_name,
+        seller_name=seller_name, error_message=None
+    )
+
+@main_routes.route('/compras')
+def compraspage():
+    user_id = 1
+
+    interests = (
+        db.session.query(ProductInterest)
+        .filter(ProductInterest.user_id == user_id)
+        .order_by(ProductInterest.contact_date.desc())
+        .all()
+    )
+
+    compras = []
+    # 1. Ativos (onde ainda possui estoque)
+    for interest in interests:
+        product = interest.product
+        if not product or product.quantity == 0:
+            continue
+
+        seller = User.query.get(product.user_id)
+        compras.append({
+            "product_id": product.id,
+            "product_name": product.name,
+            "seller_name": seller.name if seller else "",
+            "price": product.cost,
+            "buyer_id": user_id,
+            "seller_id": product.user_id,
+            "status": "Interessado",
+            "can_evaluate": False
+        })
+
+    # 2. Vendidos (histórico de compras reais da tabela Sale)
+    sales = (
+        db.session.query(Sale)
+        .filter(Sale.buyer_id == user_id)
+        .order_by(Sale.sold_date.desc())
+        .all()
+    )
+    for sale in sales:
+        product = sale.product
+        if not product:
+            continue
+
+        seller = User.query.get(product.user_id)
+        existing_review = ProductReview.query.filter_by(
+            sale_id=sale.id
+        ).first()
+        can_evaluate = existing_review is None
+
+        compras.append({
+            "product_id": product.id,
+            "product_name": f"{product.name} (x{sale.quantity})" if sale.quantity > 1 else product.name,
+            "seller_name": seller.name if seller else "",
+            "price": product.cost * sale.quantity,
+            "buyer_id": user_id,
+            "seller_id": product.user_id,
+            "sale_id": sale.id,
+            "status": "Vendido",
+            "can_evaluate": can_evaluate
+        })
+
+    return render_template("compras.html", compras=compras)
+
 @main_routes.route('/myproducts')
 def myproducts():
-    meus_produtos = Product.query.filter_by(user_id=1).all()
+    meus_produtos = Product.query.filter_by(user_id=1).filter(Product.quantity > 0).all()
     
     return render_template(
         "myproducts.html", 
@@ -41,152 +197,135 @@ def myproducts():
 def edit_product_page(prod_id):
     produto = Product.query.get_or_404(prod_id)
 
+    interesses = (
+        db.session.query(ProductInterest.user_id, User.name)
+        .join(User, ProductInterest.user_id == User.id)
+        .filter(ProductInterest.product_id == produto.id)
+        .all()
+    )
+
+    buyer = User.query.get(produto.buyer_id) if produto.buyer_id else None
+
     return render_template(
         "editproduct.html",
-        produto=produto
+        produto=produto,
+        interesses=interesses,
+        buyer_name=buyer.name if buyer else None
     )
+
+@main_routes.route('/api/product/<int:prod_id>/sell', methods=['POST'])
+def mark_product_sold(prod_id):
+    produto = Product.query.get_or_404(prod_id)
+    data = request.get_json(silent=True) or {}
+    buyer_id = data.get('buyer_id')
+    quantity_sold = int(data.get('quantity', 1))
+
+    if buyer_id is None:
+        return jsonify({"error": "Selecione um comprador."}), 400
+
+    buyer = User.query.get(int(buyer_id))
+    if not buyer:
+        return jsonify({"error": "Usuário não encontrado."}), 404
+
+    if quantity_sold <= 0:
+        return jsonify({"error": "A quantidade vendida deve ser maior que zero."}), 400
+
+    try:
+        # REFATORAÇÃO (Coupler / Transaction Script resolvido):
+        # O controlador de rotas agora atua apenas como interface HTTP. Ele não conhece as regras 
+        # internas de redução de stock, criação de histórico de vendas ou remoção de interesses.
+        # Toda essa orquestração foi delegada para o serviço especialista.
+        execute_product_sale(produto, buyer.id, quantity_sold)
+        db.session.commit()
+
+        return jsonify({
+            "success": True,
+            "buyer_id": buyer.id,
+            "buyer_name": buyer.name
+        })
+    except ValueError as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
 
 @main_routes.route('/api/product/<int:prod_id>', methods=['PUT'])
 def update_product(prod_id):
     produto = Product.query.get_or_404(prod_id)
+    form = ProductForm(meta={'csrf': False})
 
-    produto.name = request.form.get('name')
-    produto.description = request.form.get('description')
-    produto.condition = request.form.get('condition')
-    produto.cost = float(request.form.get('cost'))
-    produto.quantity = int(request.form.get('quantity'))
-    produto.usage_time = request.form.get('usage_time')
-    produto.pickup_location = request.form.get('pickup_location')
+    # Remove o DataRequired do campo de imagens APENAS para a edição
+    form.images.validators = [v for v in form.images.validators if type(v).__name__ != 'DataRequired']
 
-    categorias_str = request.form.get("categories", "")
-    nomes_categorias = [
-        nome.strip()
-        for nome in categorias_str.split(",")
-        if nome.strip()
-    ]
+    if not form.validate():
+        return jsonify({"errors": form.errors}), 400
 
-    categorias_db = Category.query.filter(
-        Category.name.in_(nomes_categorias)
-    ).all()
-    produto.categories = categorias_db
+    produto.name = form.name.data
+    produto.description = form.description.data
+    produto.condition = form.condition.data
+    produto.cost = float(form.cost.data)
+    produto.quantity = int(form.quantity.data)
+    produto.usage_time = form.usage_time.data
+    produto.pickup_location = form.pickup_location.data
 
-    novas_imagens = request.files.getlist("images")
-    print("Quantidade de imagens recebidas:", len(novas_imagens))
+    categorias_str = form.categories.data
+    nomes_categorias = [nome.strip() for nome in categorias_str.split(",") if nome.strip()]
+    produto.categories = Category.query.filter(Category.name.in_(nomes_categorias)).all()
 
+    novas_imagens = request.files.getlist(form.images.name)
+
+    # REFATORAÇÃO (Long Method e Divergent Change):
+    # Delegação da manipulação do Sistema Operacional para o imageHandler.
     if novas_imagens and novas_imagens[0].filename != "":
-        upload_path = os.path.join(
-            current_app.root_path,
-            "static",
-            "uploads"
-        )
-
-        imagens_antigas = (
-            produto.image_paths.split(",")
-            if produto.image_paths
-            else []
-        )
-
-        for nome_imagem in imagens_antigas:
-            caminho = os.path.join(upload_path, nome_imagem)
-
-            if os.path.exists(caminho):
-                os.remove(caminho)
-
-        novos_nomes = []
-
-        for imagem in novas_imagens:
-            nome_salvo = compress_and_save_image(
-                imagem,
-                upload_path
-            )
-
-            novos_nomes.append(nome_salvo)
-
-        produto.image_paths = ",".join(novos_nomes)
+        
+        delete_product_images(produto.image_paths)
+        produto.image_paths = process_and_save_images(novas_imagens)
 
     db.session.commit()
+    return jsonify({"success": True})
 
-    return jsonify({
-        "success": True
-    })
 
 @main_routes.route('/api/product/<int:prod_id>', methods=['DELETE'])
 def delete_product(prod_id):
     produto = Product.query.get_or_404(prod_id)
 
-    upload_path = os.path.join(
-    current_app.root_path,
-    'static',
-    'uploads'
-    )
-
-    imagens = (
-        produto.image_paths.split(',')
-        if produto.image_paths
-        else []
-    )
-
-    for imagem in imagens:
-        caminho = os.path.join(upload_path, imagem)
-
-        if os.path.exists(caminho):
-            os.remove(caminho)
+    # REFATORAÇÃO: O controlador não precisa mais de os.path ou os.remove
+    delete_product_images(produto.image_paths)
 
     db.session.delete(produto)
     db.session.commit()
 
-    return jsonify({
-        "success": True
-    })
+    return jsonify({"success": True})
 
-@main_routes.route('/forms', methods =['GET', 'POST'])
+
+@main_routes.route('/forms', methods=['GET', 'POST'])
 def formspage():
     form = ProductForm()
 
     if form.validate_on_submit():
-        prod_name = form.prod_name.data
-        description = form.description.data
-        quantity = form.quantity.data
-        price = form.price.data
-        condition=form.condition.data
-        usage_time=form.usage_time.data
-        pickup_location=form.pickup_location.data
         
+        # REFATORAÇÃO (Bloater): uma única chamada de função
         images = request.files.getlist(form.images.name)
-        saved_image_names = []
+        images_str = process_and_save_images(images)
         
         categorias_str = form.categories.data
         cat_names = [nome.strip() for nome in categorias_str.split(',') if nome.strip()]
         categorias_db = Category.query.filter(Category.name.in_(cat_names)).all()
-        
-        upload_path = os.path.join(current_app.root_path, 'static', 'uploads')
-        os.makedirs(upload_path, exist_ok=True)
 
-        for file in images:
-            if file and file.filename != '':
-                saved_filename = compress_and_save_image(file, upload_path)
-                saved_image_names.append(saved_filename)
-
-        images_str = ",".join(saved_image_names)
-
-        # Criação do objeto
         new_product = Product(
-            name=prod_name,
-            user_id=1, # depois ligar o usuário de verdade ao produto adicionado
-            cost=price,
-            quantity=quantity,
-            description=description,
+            name=form.name.data,
+            user_id=1,
+            cost=form.cost.data,
+            quantity=form.quantity.data,
+            description=form.description.data,
             image_paths=images_str,
             categories=categorias_db,
-            condition=condition,
-            usage_time=usage_time,
-            pickup_location=pickup_location
+            condition=form.condition.data,
+            usage_time=form.usage_time.data,
+            pickup_location=form.pickup_location.data
         )
 
         try:
             db.session.add(new_product)
             db.session.commit()
-            print(f"Sucesso! Produto {prod_name} salvo no banco com {len(saved_image_names)} imagens!")
         except Exception as e:
             db.session.rollback()
             print(f"Erro ao salvar no banco: {e}")
@@ -310,3 +449,82 @@ def api_similar_products(prod_id):
         .all()
 
     return jsonify([p.to_dict() for p in similar_products])
+
+@main_routes.route("/api/productInterest/<int:product_id>", methods=["POST"])
+def register_product_interest(product_id):
+
+    product = db.session.get(Product, product_id)
+
+    if not product:
+        return "", 404
+
+    user_id = 1
+
+    interest = ProductInterest.query.filter_by(
+        product_id=product_id,
+        user_id=user_id
+    ).first()
+
+    if not interest:
+        interest = ProductInterest(
+            product_id=product_id,
+            user_id=user_id
+        )
+
+        db.session.add(interest)
+        db.session.commit()
+
+    return "", 204
+
+@main_routes.route('/dashboard/<int:seller_id>')
+def dashboard(seller_id):
+
+    total_products = Product.query.filter_by(user_id=seller_id).count()
+    recent_products = (
+        Product.query
+        .filter_by(user_id=seller_id)
+        .order_by(Product.post_date.desc())
+        .limit(5)
+        .all()
+    )
+
+    total_contacts = (
+        ProductInterest.query
+        .join(Product)
+        .filter(Product.user_id == seller_id)
+        .count()
+    )
+
+    top_categories = (
+        db.session.query(
+            Category.name,
+            db.func.count(Product.id).label("total")
+        )
+        .join(Category.products)
+        .filter(Product.user_id == seller_id)
+        .group_by(Category.id) # ..., Category.name
+        .order_by(db.func.count(Product.id).desc())
+        .limit(5)
+        .all()
+    )
+
+    seller = User.query.get(seller_id)
+    average_rating = seller.rating_avg if seller and seller.rating_avg else '-'
+
+    recent_reviews = (
+        ProductReview.query
+        .filter_by(target_user_id=seller_id)
+        .order_by(ProductReview.created_at.desc())
+        .limit(3)
+        .all()
+    )
+
+    return render_template(
+        "dashboard.html",
+        total_products=total_products,
+        total_contacts=total_contacts,
+        average_rating=average_rating,
+        recent_products=recent_products,
+        top_categories=top_categories,
+        recent_reviews=recent_reviews,
+    )

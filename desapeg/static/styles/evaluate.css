@@ -1,0 +1,201 @@
+.evaluation-page {
+    min-height: calc(100vh - 10rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.evaluation-card {
+    width: min(100%, 640px);
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+}
+
+.eyebrow {
+    margin: 0 0 0.4rem;
+    color: #ea7525;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.8rem;
+}
+
+.evaluation-card h2 {
+    margin: 0;
+    color: #2f4f2f;
+    font-size: 2rem;
+}
+
+.subtitle {
+    margin: 0.7rem 0 1.5rem;
+    color: #5f6b66;
+    line-height: 1.5;
+}
+
+.evaluation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.rating-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.rating-label,
+.field span {
+    font-weight: 700;
+    color: #2f4f2f;
+}
+
+.stars {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.star {
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    color: #d9d9d9;
+    cursor: pointer;
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.star:hover,
+.star.hovered,
+.star.active {
+    color: #f4b400;
+    transform: scale(1.08);
+}
+
+.rating-help {
+    margin: 0;
+    color: #7b867f;
+    font-size: 0.95rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.field textarea {
+    width: 100%;
+    resize: vertical;
+    min-height: 120px;
+    border: 1px solid #d9d9d9;
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.field textarea:focus {
+    outline: 2px solid rgba(234, 117, 37, 0.25);
+    border-color: #ea7525;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.btn {
+    border: none;
+    border-radius: 999px;
+    padding: 0.8rem 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #449800;
+    color: white;
+}
+
+.purchases-card {
+    width: min(100%, 760px);
+}
+
+.purchase-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.purchase-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid #e7e2d9;
+    border-radius: 18px;
+    background: #fcfbf8;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.purchase-main {
+    flex: 1;
+}
+
+.purchase-main h3 {
+    margin: 0 0 0.25rem;
+    color: #2f4f2f;
+}
+
+.purchase-price {
+    margin: 0;
+    color: #ea7525;
+    font-weight: 700;
+}
+
+.purchase-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    color: #5f6b66;
+    font-size: 0.95rem;
+}
+
+.purchase-action {
+    white-space: nowrap;
+}
+
+.btn-secondary {
+    background: #f2efe8;
+    color: #2f4f2f;
+}
+
+@media (max-width: 600px) {
+    .evaluation-card {
+        padding: 1.4rem;
+    }
+
+    .purchase-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .purchase-action {
+        width: 100%;
+        text-align: center;
+    }
+
+    .actions {
+        flex-direction: column-reverse;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
