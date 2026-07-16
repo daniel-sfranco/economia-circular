@@ -1,11 +1,13 @@
 import json
 import os
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, current_app
+from .imageHandler import delete_product_images, process_and_save_images
 
 from desapeg.builders import ProductSearchBuilder
 from desapeg.models.product_interest import ProductInterest
 from desapeg.models.product_review import ProductReview
 from desapeg.models.category import Category
+from desapeg.services import execute_product_sale
 from .models.product import Product
 from .models.user import User
 from .models.product_interest import ProductInterest
@@ -39,66 +41,44 @@ def evaluatepage():
     seller_id = request.args.get('seller_id') or request.form.get('seller_id')
     sale_id = request.args.get('sale_id') or request.form.get('sale_id')
 
+    # REFATORAÇÃO (Long Method): 
+    # Extração das chamadas repetidas de render_template para uma função auxiliar, 
+    # aplicando o princípio DRY (Don't Repeat Yourself)
+    def render_error(mensagem):
+        return render_template(
+            "evaluate.html",
+            product_id=product_id, buyer_id=buyer_id,
+            seller_id=seller_id, sale_id=sale_id,
+            error_message=mensagem
+        )
+
     if request.method == 'POST':
         score_raw = request.form.get('rating', '').strip()
         comment = request.form.get('comment', '').strip() or None
 
+        # Validações enxutas
         if not score_raw:
-            return render_template(
-                "evaluate.html",
-                product_id=product_id,
-                buyer_id=buyer_id,
-                seller_id=seller_id,
-                sale_id=sale_id,
-                error_message='Selecione uma nota antes de enviar a avaliação.'
-            )
-
+            return render_error('Selecione uma nota antes de enviar a avaliação.')
+        
         try:
             score = int(score_raw)
         except ValueError:
-            return render_template(
-                "evaluate.html",
-                product_id=product_id,
-                buyer_id=buyer_id,
-                seller_id=seller_id,
-                sale_id=sale_id,
-                error_message='A nota deve ser um número válido.'
-            )
+            return render_error('A nota deve ser um número válido.')
 
         if not seller_id:
-            return render_template(
-                "evaluate.html",
-                product_id=product_id,
-                buyer_id=buyer_id,
-                seller_id=seller_id,
-                sale_id=sale_id,
-                error_message='Não foi possível identificar o vendedor da avaliação.'
-            )
+            return render_error('Não foi possível identificar o vendedor da avaliação.')
 
         seller = User.query.get(int(seller_id))
         if not seller:
-            return render_template(
-                "evaluate.html",
-                product_id=product_id,
-                buyer_id=buyer_id,
-                seller_id=seller_id,
-                sale_id=sale_id,
-                error_message='Vendedor não encontrado.'
-            )
+            return render_error('Vendedor não encontrado.')
 
-        reviewer_id = 1
+        reviewer_id = 1 
 
         existing_review = None
         if sale_id:
-            existing_review = ProductReview.query.filter_by(
-                sale_id=int(sale_id),
-                reviewer_id=reviewer_id
-            ).first()
+            existing_review = ProductReview.query.filter_by(sale_id=int(sale_id), reviewer_id=reviewer_id).first()
         elif product_id:
-            existing_review = ProductReview.query.filter_by(
-                product_id=int(product_id),
-                reviewer_id=reviewer_id
-            ).first()
+            existing_review = ProductReview.query.filter_by(product_id=int(product_id), reviewer_id=reviewer_id).first()
 
         if existing_review:
             existing_review.score = score
@@ -117,40 +97,30 @@ def evaluatepage():
             )
             db.session.add(review)
 
-        reviews = ProductReview.query.filter_by(target_user_id=seller.id).all()
-        seller.rating_count = len(reviews)
-        seller.rating_avg = round(sum(review.score for review in reviews) / len(reviews), 1) if reviews else 0.0
-
+        db.session.flush() 
+        # REFATORAÇÃO (Feature Envy): 
+        # Delegação do cálculo da nota para a entidade dona da informação (User), 
+        # limpando a lógica de negócio de dentro do controlador de rotas.
+        seller.update_rating()
         db.session.commit()
+
         return redirect(url_for('main_routes.dashboard', seller_id=seller.id))
 
-    product_name = None
-    buyer_name = None
-    seller_name = None
+    product_name = buyer_name = seller_name = None
 
-    if product_id:
-        product = Product.query.get(int(product_id))
-        if product:
-            product_name = product.name
-    if buyer_id:
-        buyer = User.query.get(int(buyer_id))
-        if buyer:
-            buyer_name = buyer.name
-    if seller_id:
-        seller = User.query.get(int(seller_id))
-        if seller:
-            seller_name = seller.name
+    if product_id and (product := Product.query.get(int(product_id))):
+        product_name = product.name
+    if buyer_id and (buyer := User.query.get(int(buyer_id))):
+        buyer_name = buyer.name
+    if seller_id and (seller_obj := User.query.get(int(seller_id))):
+        seller_name = seller_obj.name
 
     return render_template(
         "evaluate.html",
-        product_id=product_id,
-        buyer_id=buyer_id,
-        seller_id=seller_id,
-        sale_id=sale_id,
-        product_name=product_name,
-        buyer_name=buyer_name,
-        seller_name=seller_name,
-        error_message=None
+        product_id=product_id, buyer_id=buyer_id,
+        seller_id=seller_id, sale_id=sale_id,
+        product_name=product_name, buyer_name=buyer_name,
+        seller_name=seller_name, error_message=None
     )
 
 @main_routes.route('/compras')
@@ -262,40 +232,26 @@ def mark_product_sold(prod_id):
     if quantity_sold <= 0:
         return jsonify({"error": "A quantidade vendida deve ser maior que zero."}), 400
 
-    if quantity_sold > produto.quantity:
-        return jsonify({"error": f"Quantidade solicitada ({quantity_sold}) é maior que a disponível ({produto.quantity})."}), 400
+    try:
+        # REFATORAÇÃO (Coupler / Transaction Script resolvido):
+        # O controlador de rotas agora atua apenas como interface HTTP. Ele não conhece as regras 
+        # internas de redução de stock, criação de histórico de vendas ou remoção de interesses.
+        # Toda essa orquestração foi delegada para o serviço especialista.
+        execute_product_sale(produto, buyer.id, quantity_sold)
+        db.session.commit()
 
-    # 1. Update product quantity
-    produto.quantity = max(0, produto.quantity - quantity_sold)
-    
-    # 2. Record sale
-    sale = Sale(product_id=produto.id, buyer_id=buyer.id, quantity=quantity_sold)
-    db.session.add(sale)
-
-    # 3. For compatibility/legacy support, set buyer_id and sold = True
-    produto.buyer_id = buyer.id
-    produto.sold = True
-
-    # 4. Remove interest for this buyer on this product
-    interest = ProductInterest.query.filter_by(
-        product_id=produto.id,
-        user_id=buyer.id
-    ).first()
-    if interest:
-        db.session.delete(interest)
-
-    db.session.commit()
-
-    return jsonify({
-        "success": True,
-        "buyer_id": buyer.id,
-        "buyer_name": buyer.name
-    })
+        return jsonify({
+            "success": True,
+            "buyer_id": buyer.id,
+            "buyer_name": buyer.name
+        })
+    except ValueError as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
 
 @main_routes.route('/api/product/<int:prod_id>', methods=['PUT'])
 def update_product(prod_id):
     produto = Product.query.get_or_404(prod_id)
-
     form = ProductForm(meta={'csrf': False})
 
     # Remove o DataRequired do campo de imagens APENAS para a edição
@@ -313,132 +269,65 @@ def update_product(prod_id):
     produto.pickup_location = form.pickup_location.data
 
     categorias_str = form.categories.data
-    nomes_categorias = [
-        nome.strip()
-        for nome in categorias_str.split(",")
-        if nome.strip()
-    ]
-
-    categorias_db = Category.query.filter(
-        Category.name.in_(nomes_categorias)
-    ).all()
-    produto.categories = categorias_db
+    nomes_categorias = [nome.strip() for nome in categorias_str.split(",") if nome.strip()]
+    produto.categories = Category.query.filter(Category.name.in_(nomes_categorias)).all()
 
     novas_imagens = request.files.getlist(form.images.name)
 
-    # Só altera as imagens no banco e no disco SE o usuário enviou novos arquivos
+    # REFATORAÇÃO (Long Method e Divergent Change):
+    # Delegação da manipulação do Sistema Operacional para o imageHandler.
     if novas_imagens and novas_imagens[0].filename != "":
-        upload_path = os.path.join(
-            current_app.root_path,
-            "static",
-            "uploads"
-        )
-
-        imagens_antigas = (
-            produto.image_paths.split(",")
-            if produto.image_paths
-            else []
-        )
-
-        for nome_imagem in imagens_antigas:
-            caminho = os.path.join(upload_path, nome_imagem)
-            if os.path.exists(caminho):
-                os.remove(caminho)
-
-        novos_nomes = []
-
-        for imagem in novas_imagens:
-            nome_salvo = compress_and_save_image(
-                imagem,
-                upload_path
-            )
-            novos_nomes.append(nome_salvo)
-
-        produto.image_paths = ",".join(novos_nomes)
+        
+        delete_product_images(produto.image_paths)
+        produto.image_paths = process_and_save_images(novas_imagens)
 
     db.session.commit()
+    return jsonify({"success": True})
 
-    return jsonify({
-        "success": True
-    })
 
 @main_routes.route('/api/product/<int:prod_id>', methods=['DELETE'])
 def delete_product(prod_id):
     produto = Product.query.get_or_404(prod_id)
 
-    upload_path = os.path.join(
-    current_app.root_path,
-    'static',
-    'uploads'
-    )
-
-    imagens = (
-        produto.image_paths.split(',')
-        if produto.image_paths
-        else []
-    )
-
-    for imagem in imagens:
-        caminho = os.path.join(upload_path, imagem)
-
-        if os.path.exists(caminho):
-            os.remove(caminho)
+    # REFATORAÇÃO: O controlador não precisa mais de os.path ou os.remove
+    delete_product_images(produto.image_paths)
 
     db.session.delete(produto)
     db.session.commit()
 
-    return jsonify({
-        "success": True
-    })
+    return jsonify({"success": True})
 
-@main_routes.route('/forms', methods =['GET', 'POST'])
+
+@main_routes.route('/forms', methods=['GET', 'POST'])
 def formspage():
     form = ProductForm()
 
     if form.validate_on_submit():
-        prod_name = form.name.data
-        description = form.description.data
-        quantity = form.quantity.data
-        price = form.cost.data
-        condition=form.condition.data
-        usage_time=form.usage_time.data
-        pickup_location=form.pickup_location.data
         
+        # REFATORAÇÃO (Bloater): uma única chamada de função
         images = request.files.getlist(form.images.name)
-        saved_image_names = []
+        images_str = process_and_save_images(images)
         
         categorias_str = form.categories.data
         cat_names = [nome.strip() for nome in categorias_str.split(',') if nome.strip()]
         categorias_db = Category.query.filter(Category.name.in_(cat_names)).all()
-        
-        upload_path = os.path.join(current_app.root_path, 'static', 'uploads')
-        os.makedirs(upload_path, exist_ok=True)
 
-        for file in images:
-            if file and file.filename != '':
-                saved_filename = compress_and_save_image(file, upload_path)
-                saved_image_names.append(saved_filename)
-
-        images_str = ",".join(saved_image_names)
-
-        # Criação do objeto
         new_product = Product(
-            name=prod_name,
-            user_id=1, # depois ligar o usuário de verdade ao produto adicionado
-            cost=price,
-            quantity=quantity,
-            description=description,
+            name=form.name.data,
+            user_id=1,
+            cost=form.cost.data,
+            quantity=form.quantity.data,
+            description=form.description.data,
             image_paths=images_str,
             categories=categorias_db,
-            condition=condition,
-            usage_time=usage_time,
-            pickup_location=pickup_location
+            condition=form.condition.data,
+            usage_time=form.usage_time.data,
+            pickup_location=form.pickup_location.data
         )
 
         try:
             db.session.add(new_product)
             db.session.commit()
-            print(f"Sucesso! Produto {prod_name} salvo no banco com {len(saved_image_names)} imagens!")
         except Exception as e:
             db.session.rollback()
             print(f"Erro ao salvar no banco: {e}")
