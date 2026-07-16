@@ -31,6 +31,7 @@ class Product(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'user_id': self.user_id,
             'owner_name': self.owner.name if self.owner else None,
             'owner_phone': self.owner.phone if self.owner else None,
             'cost': self.cost,

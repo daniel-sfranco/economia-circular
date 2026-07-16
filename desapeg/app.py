@@ -3,12 +3,17 @@ from flask import Flask
 from .extensions import db
 from .routes import *
 from .models.product import Product
+from .models.product_review import ProductReview
+from .models.sale import Sale
 
 app = Flask(__name__)
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(BASE_DIR, "mock.db")}'
 app.config['SECRET_KEY'] = 'chave_random_pra_testar'
 db.init_app(app)
+
+with app.app_context():
+    db.create_all()
 
 app.register_blueprint(main_routes)
 
