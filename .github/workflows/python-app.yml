@@ -5,7 +5,7 @@ name: Python application
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "test/testes-com-criterios" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -43,4 +43,4 @@ jobs:
       run: python -m desapeg.seed
 
     - name: Test with unittest
-      run: python -m unittest -q
+      run: python -m unittest -v
