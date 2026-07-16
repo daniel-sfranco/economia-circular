@@ -1,6 +1,7 @@
 import json
 import os
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, current_app
+from .imageHandler import delete_product_images, process_and_save_images
 
 from desapeg.builders import ProductSearchBuilder
 from desapeg.models.product_interest import ProductInterest
@@ -251,7 +252,6 @@ def mark_product_sold(prod_id):
 @main_routes.route('/api/product/<int:prod_id>', methods=['PUT'])
 def update_product(prod_id):
     produto = Product.query.get_or_404(prod_id)
-
     form = ProductForm(meta={'csrf': False})
 
     # Remove o DataRequired do campo de imagens APENAS para a edição
@@ -269,132 +269,65 @@ def update_product(prod_id):
     produto.pickup_location = form.pickup_location.data
 
     categorias_str = form.categories.data
-    nomes_categorias = [
-        nome.strip()
-        for nome in categorias_str.split(",")
-        if nome.strip()
-    ]
-
-    categorias_db = Category.query.filter(
-        Category.name.in_(nomes_categorias)
-    ).all()
-    produto.categories = categorias_db
+    nomes_categorias = [nome.strip() for nome in categorias_str.split(",") if nome.strip()]
+    produto.categories = Category.query.filter(Category.name.in_(nomes_categorias)).all()
 
     novas_imagens = request.files.getlist(form.images.name)
 
-    # Só altera as imagens no banco e no disco SE o usuário enviou novos arquivos
+    # REFATORAÇÃO (Long Method e Divergent Change):
+    # Delegação da manipulação do Sistema Operacional para o imageHandler.
     if novas_imagens and novas_imagens[0].filename != "":
-        upload_path = os.path.join(
-            current_app.root_path,
-            "static",
-            "uploads"
-        )
-
-        imagens_antigas = (
-            produto.image_paths.split(",")
-            if produto.image_paths
-            else []
-        )
-
-        for nome_imagem in imagens_antigas:
-            caminho = os.path.join(upload_path, nome_imagem)
-            if os.path.exists(caminho):
-                os.remove(caminho)
-
-        novos_nomes = []
-
-        for imagem in novas_imagens:
-            nome_salvo = compress_and_save_image(
-                imagem,
-                upload_path
-            )
-            novos_nomes.append(nome_salvo)
-
-        produto.image_paths = ",".join(novos_nomes)
+        
+        delete_product_images(produto.image_paths)
+        produto.image_paths = process_and_save_images(novas_imagens)
 
     db.session.commit()
+    return jsonify({"success": True})
 
-    return jsonify({
-        "success": True
-    })
 
 @main_routes.route('/api/product/<int:prod_id>', methods=['DELETE'])
 def delete_product(prod_id):
     produto = Product.query.get_or_404(prod_id)
 
-    upload_path = os.path.join(
-    current_app.root_path,
-    'static',
-    'uploads'
-    )
-
-    imagens = (
-        produto.image_paths.split(',')
-        if produto.image_paths
-        else []
-    )
-
-    for imagem in imagens:
-        caminho = os.path.join(upload_path, imagem)
-
-        if os.path.exists(caminho):
-            os.remove(caminho)
+    # REFATORAÇÃO: O controlador não precisa mais de os.path ou os.remove
+    delete_product_images(produto.image_paths)
 
     db.session.delete(produto)
     db.session.commit()
 
-    return jsonify({
-        "success": True
-    })
+    return jsonify({"success": True})
 
-@main_routes.route('/forms', methods =['GET', 'POST'])
+
+@main_routes.route('/forms', methods=['GET', 'POST'])
 def formspage():
     form = ProductForm()
 
     if form.validate_on_submit():
-        prod_name = form.name.data
-        description = form.description.data
-        quantity = form.quantity.data
-        price = form.cost.data
-        condition=form.condition.data
-        usage_time=form.usage_time.data
-        pickup_location=form.pickup_location.data
         
+        # REFATORAÇÃO (Bloater): uma única chamada de função
         images = request.files.getlist(form.images.name)
-        saved_image_names = []
+        images_str = process_and_save_images(images)
         
         categorias_str = form.categories.data
         cat_names = [nome.strip() for nome in categorias_str.split(',') if nome.strip()]
         categorias_db = Category.query.filter(Category.name.in_(cat_names)).all()
-        
-        upload_path = os.path.join(current_app.root_path, 'static', 'uploads')
-        os.makedirs(upload_path, exist_ok=True)
 
-        for file in images:
-            if file and file.filename != '':
-                saved_filename = compress_and_save_image(file, upload_path)
-                saved_image_names.append(saved_filename)
-
-        images_str = ",".join(saved_image_names)
-
-        # Criação do objeto
         new_product = Product(
-            name=prod_name,
-            user_id=1, # depois ligar o usuário de verdade ao produto adicionado
-            cost=price,
-            quantity=quantity,
-            description=description,
+            name=form.name.data,
+            user_id=1,
+            cost=form.cost.data,
+            quantity=form.quantity.data,
+            description=form.description.data,
             image_paths=images_str,
             categories=categorias_db,
-            condition=condition,
-            usage_time=usage_time,
-            pickup_location=pickup_location
+            condition=form.condition.data,
+            usage_time=form.usage_time.data,
+            pickup_location=form.pickup_location.data
         )
 
         try:
             db.session.add(new_product)
             db.session.commit()
-            print(f"Sucesso! Produto {prod_name} salvo no banco com {len(saved_image_names)} imagens!")
         except Exception as e:
             db.session.rollback()
             print(f"Erro ao salvar no banco: {e}")
