@@ -9,11 +9,11 @@
 <div class="product-registration-container"
     data-product-id="{{ produto.id }}">
     <h2>Editar Produto</h2>
-    
+
     <p>{{ produto.name }}</p>
 
     <form class="product-form" novalidate autocomplete="off">
-        
+
         <div class="name-field">
             <label class="field-label">Nome do Produto</label>
             <input type="text" id="product-name" class="input-text" value="{{ produto.name }}" placeholder="Ex: Livro de Algoritmos, Calculadora HP...">
@@ -55,6 +55,7 @@
 
         <div class="categories-field">
             <label class="field-label">Categorias</label>
+
             <div class="tags-input-container" id="tags-container">
                 <input
                     type="text"
@@ -63,17 +64,31 @@
                     autocomplete="off"
                 >
             </div>
-            
-            <input type="hidden" id="hidden-categories" value="{{ produto.categories | map(attribute='name') | join(',') }}"
->
-            
+
+            <input
+                type="hidden"
+                id="hidden-categories"
+                value="{{ produto.categories | map(attribute='name') | join(',') }}"
+            >
+
             <div class="autocomplete-dropdown" id="autocomplete-list"></div>
         </div>
 
         <div class="images-field">
             <label class="field-label">Imagens (Envie novos ficheiros para substituir os atuais)</label>
-            <input type="file" class="input-file" id="image-upload" accept=".jpg,.jpeg,.png" multiple="True">
-            <small class="help-text">Selecione até 5 ficheiros simultaneamente.</small>
+
+            <input
+                type="file"
+                class="input-file"
+                id="image-upload"
+                accept=".jpg,.jpeg,.png"
+                multiple="True"
+            >
+
+            <small class="help-text">
+                Selecione até 5 ficheiros simultaneamente.
+            </small>
+
             <div id="image-preview-container" class="image-preview-container">
 
                 {% if produto.image_paths %}
@@ -90,18 +105,73 @@
         </div>
 
         <div class="submit-action">
-            <button type="button" class="submit-button" onclick="saveProduct()">Salvar Alterações</button>
+            <button
+                type="button"
+                class="submit-button"
+                onclick="saveProduct()">
+                Salvar Alterações
+            </button>
         </div>
+
     </form>
 
-    <div class="danger-zone" style="margin-top: 40px; padding: 20px; border: 2px dashed #f44336; border-radius: 8px; background-color: #fff5f5;">
-        <h3 style="color: #f44336; margin-top: 0;">Zona de Perigo</h3>
-        <p>Ao excluir este produto, ele será removido permanentemente e todas as imagens associadas serão apagadas do servidor.</p>
-        <button type="button" class="btn-danger" 
-        style="background-color: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;
-                font-weight: bold; margin-top: 10px;"
-        onclick="deleteProduct(`{{ produto.id }}`)">Excluir Produto Permanentemente</button>
+    <!-- SEÇÃO COM OS INTERESSADOS NO PRODUTO -->
+    <div class="sale-section">
+        <h3>Gerenciar Venda</h3>
+
+        <p class="sale-description">
+            Os usuários abaixo demonstraram interesse neste produto. Selecione o comprador e marque o produto como vendido.
+        </p>
+
+        <div class="interested-users">
+
+            <!-- Dados fictícios por enquanto -->
+
+            <label class="interested-user">
+                <input type="radio" name="buyer" value="1">
+                Gabriel
+            </label>
+
+            <label class="interested-user">
+                <input type="radio" name="buyer" value="2">
+                João
+            </label>
+
+            <label class="interested-user">
+                <input type="radio" name="buyer" value="3">
+                Maria
+            </label>
+
+        </div>
+
+        <button
+            type="button"
+            class="submit-button"
+            id="mark-sold-button">
+            Marcar como vendido
+        </button>
     </div>
+    <!--  -->
+
+    <div class="danger-zone"
+        style="margin-top: 40px; padding: 20px; border: 2px dashed #f44336; border-radius: 8px; background-color: #fff5f5;">
+
+        <h3 style="color: #f44336; margin-top: 0;">Zona de Perigo</h3>
+
+        <p>
+            Ao excluir este produto, ele será removido permanentemente e todas as imagens associadas serão apagadas do servidor.
+        </p>
+
+        <button
+            type="button"
+            class="btn-danger"
+            style="background-color: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px;"
+            onclick="deleteProduct(`{{ produto.id }}`)">
+            Excluir Produto Permanentemente
+        </button>
+
+    </div>
+
 </div>
 
 <div id="image-modal" class="modal">
@@ -109,4 +179,5 @@
 </div>
 
 <script src="{{ url_for('static', filename='scripts/editProduct.js') }}"></script>
+
 {% endblock %}

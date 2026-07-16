@@ -27,6 +27,10 @@ def aboutpage():
 def productpage():
     return render_template("product.html")
 
+@main_routes.route('/evaluate')
+def evaluatepage():
+    return render_template("evaluate.html")
+
 @main_routes.route('/myproducts')
 def myproducts():
     meus_produtos = Product.query.filter_by(user_id=1).all()
@@ -316,3 +320,7 @@ def api_similar_products(prod_id):
         .all()
 
     return jsonify([p.to_dict() for p in similar_products])
+
+@main_routes.route('/dashboard')
+def dashboard():
+    return render_template("dashboard.html")
