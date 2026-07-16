@@ -39,66 +39,44 @@ def evaluatepage():
     seller_id = request.args.get('seller_id') or request.form.get('seller_id')
     sale_id = request.args.get('sale_id') or request.form.get('sale_id')
 
+    # REFATORAÇÃO (Long Method): 
+    # Extração das chamadas repetidas de render_template para uma função auxiliar, 
+    # aplicando o princípio DRY (Don't Repeat Yourself)
+    def render_error(mensagem):
+        return render_template(
+            "evaluate.html",
+            product_id=product_id, buyer_id=buyer_id,
+            seller_id=seller_id, sale_id=sale_id,
+            error_message=mensagem
+        )
+
     if request.method == 'POST':
         score_raw = request.form.get('rating', '').strip()
         comment = request.form.get('comment', '').strip() or None
 
+        # Validações enxutas
         if not score_raw:
-            return render_template(
-                "evaluate.html",
-                product_id=product_id,
-                buyer_id=buyer_id,
-                seller_id=seller_id,
-                sale_id=sale_id,
-                error_message='Selecione uma nota antes de enviar a avaliação.'
-            )
-
+            return render_error('Selecione uma nota antes de enviar a avaliação.')
+        
         try:
             score = int(score_raw)
         except ValueError:
-            return render_template(
-                "evaluate.html",
-                product_id=product_id,
-                buyer_id=buyer_id,
-                seller_id=seller_id,
-                sale_id=sale_id,
-                error_message='A nota deve ser um número válido.'
-            )
+            return render_error('A nota deve ser um número válido.')
 
         if not seller_id:
-            return render_template(
-                "evaluate.html",
-                product_id=product_id,
-                buyer_id=buyer_id,
-                seller_id=seller_id,
-                sale_id=sale_id,
-                error_message='Não foi possível identificar o vendedor da avaliação.'
-            )
+            return render_error('Não foi possível identificar o vendedor da avaliação.')
 
         seller = User.query.get(int(seller_id))
         if not seller:
-            return render_template(
-                "evaluate.html",
-                product_id=product_id,
-                buyer_id=buyer_id,
-                seller_id=seller_id,
-                sale_id=sale_id,
-                error_message='Vendedor não encontrado.'
-            )
+            return render_error('Vendedor não encontrado.')
 
-        reviewer_id = 1
+        reviewer_id = 1 
 
         existing_review = None
         if sale_id:
-            existing_review = ProductReview.query.filter_by(
-                sale_id=int(sale_id),
-                reviewer_id=reviewer_id
-            ).first()
+            existing_review = ProductReview.query.filter_by(sale_id=int(sale_id), reviewer_id=reviewer_id).first()
         elif product_id:
-            existing_review = ProductReview.query.filter_by(
-                product_id=int(product_id),
-                reviewer_id=reviewer_id
-            ).first()
+            existing_review = ProductReview.query.filter_by(product_id=int(product_id), reviewer_id=reviewer_id).first()
 
         if existing_review:
             existing_review.score = score
@@ -117,40 +95,30 @@ def evaluatepage():
             )
             db.session.add(review)
 
-        reviews = ProductReview.query.filter_by(target_user_id=seller.id).all()
-        seller.rating_count = len(reviews)
-        seller.rating_avg = round(sum(review.score for review in reviews) / len(reviews), 1) if reviews else 0.0
-
+        db.session.flush() 
+        # REFATORAÇÃO (Feature Envy): 
+        # Delegação do cálculo da nota para a entidade dona da informação (User), 
+        # limpando a lógica de negócio de dentro do controlador de rotas.
+        seller.update_rating()
         db.session.commit()
+
         return redirect(url_for('main_routes.dashboard', seller_id=seller.id))
 
-    product_name = None
-    buyer_name = None
-    seller_name = None
+    product_name = buyer_name = seller_name = None
 
-    if product_id:
-        product = Product.query.get(int(product_id))
-        if product:
-            product_name = product.name
-    if buyer_id:
-        buyer = User.query.get(int(buyer_id))
-        if buyer:
-            buyer_name = buyer.name
-    if seller_id:
-        seller = User.query.get(int(seller_id))
-        if seller:
-            seller_name = seller.name
+    if product_id and (product := Product.query.get(int(product_id))):
+        product_name = product.name
+    if buyer_id and (buyer := User.query.get(int(buyer_id))):
+        buyer_name = buyer.name
+    if seller_id and (seller_obj := User.query.get(int(seller_id))):
+        seller_name = seller_obj.name
 
     return render_template(
         "evaluate.html",
-        product_id=product_id,
-        buyer_id=buyer_id,
-        seller_id=seller_id,
-        sale_id=sale_id,
-        product_name=product_name,
-        buyer_name=buyer_name,
-        seller_name=seller_name,
-        error_message=None
+        product_id=product_id, buyer_id=buyer_id,
+        seller_id=seller_id, sale_id=sale_id,
+        product_name=product_name, buyer_name=buyer_name,
+        seller_name=seller_name, error_message=None
     )
 
 @main_routes.route('/compras')
